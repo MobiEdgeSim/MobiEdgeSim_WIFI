@@ -1,0 +1,3 @@
+package mobiedgesim;
+
+@license(LGPL);
