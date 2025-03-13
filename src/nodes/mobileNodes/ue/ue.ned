@@ -28,6 +28,7 @@ import inet.transportlayer.contract.ISctp;
 import inet.transportlayer.contract.ITcp;
 import inet.transportlayer.contract.IUdp;
 import inet.linklayer.contract.IWirelessInterface;
+import simu5g.stack.ICellularNic;
 //
 // TODO auto-generated module
 //
@@ -46,57 +47,37 @@ module Ue
         @figure[linkLayer.title](type=text; pos=845,461; anchor=ne; text="link layer");
         @figure[submodules];
 
-        //# Apps
-        int numApps = default(0);   // no of apps.
-                                    // Specify the app types in INI file with app[0..1].typename="UdpVideoStreamClient" syntax
-
         //# Transport layer
         bool hasUdp = default(firstAvailableOrEmpty("Udp") != "");
         bool hasTcp = default(firstAvailableOrEmpty("Tcp", "TcpLwip", "TcpNsc") != "");
         bool hasSctp = default(false);
-
-        //# Node specs
-        string nodeType = "UE";  // DO NOT CHANGE
-        int masterId @mutable;
-        int macNodeId @mutable = default(0); // TODO: this is not a real parameter
-        int macCellId @mutable = default(0); // TODO: this is not a real parameter
-
-        //# Network Layer specs
+        bool hasRNISupport = default(false);
         bool hasIpv4 = default(true);
         bool hasIpv6 = default(false);
-        *.interfaceTableModule = default(absPath(".interfaceTable"));
-        *.routingTableModule = default("^.ipv4.routingTable");
-        *.mobilityModule = default(absPath(".mobility"));
-
-        //# External Ethernet interfaces
-        int numEthInterfaces = default(0);
-        string extHostAddress = default("");
-
-        //# Loopback interfaces
-        int numLoInterfaces = default(1);
-
-        //# Num of PcapRecorders
-        int numPcapRecorders = default(0); // no of PcapRecorders
-
-        bool hasRNISupport = default(false);
+        bool hasCellular = default(false);
+        bool hasEth = default(false);
+        bool hasWlan = default(true);
+        
         cellularNic.mac.collectorModule = hasRNISupport ? "^.^.ueCollector" : "";
         cellularNic.phy.hasCollector = hasRNISupport;
-        
-        
-        //# Mobility
-        mobility.typename = default("VeinsInetMobility");
 
-        //# Network Layer specs
-        *.routingTableModule = default(absPath(".ipv4.routingTable"));
+        //settings for mobile 
+        mobility.typename = default("VeinsInetMobility");//# Mobility
+        *.routingTableModule = default(absPath(".ipv4.routingTable"));//# Network Layer specs
         *.interfaceTableModule = default(absPath(".interfaceTable"));
-
         ipv4.configurator.typename = "HostAutoConfigurator";
-        ipv4.configurator.interfaces = "cellular lo0";
-        
+        ipv4.configurator.interfaces = "wlan lo0";
 
+        int numEthInterfaces = default(0);
+        int numWlanInterfaces = default(0);
+        int numApps = default(0);
+        int numPcapRecorders = default(0); // no of PcapRecorders
+        int numLoInterfaces = default(1);
+        string extHostAddress = default("");
     gates:
-        input radioIn[numWlanInterfaces] @directIn;
-
+        input wlanRadioIn[numWlanInterfaces] @directIn @allowUnconnected;
+        input cellularRadioIn @directIn @allowUnconnected;
+        inout ethg[numEthInterfaces] @labels(EtherFrame-conn) @allowUnconnected;
     submodules:
         interfaceTable: InterfaceTable {
             @display("p=127,257;is=s");
@@ -107,7 +88,7 @@ module Ue
          //# link layer
         lo[numLoInterfaces]: <default("LoopbackInterface")> like ILoopbackInterface {
             parameters:
-                @display("p=398,589,row,150");
+                @display("p=277,550,row,150");
         }
 
         //# network layer
@@ -159,8 +140,15 @@ module Ue
             @display("p=126,346,r,10");
         }
 
-        wlan[numWlanInterfaces]: <default("Ieee80211Interface")> like IWirelessInterface {
-            @display("p=632,589,row,150;q=queue");
+        wlan[numWlanInterfaces]: <default("Ieee80211Interface")> like IWirelessInterface if hasWlan{
+            @display("p=524,550,row,150;q=queue");
+        }
+        eth[sizeof( ethg)]: <default("EthernetInterface")> like IEthernetInterface if hasEth{
+            @display("p=748,550,row,150;q=txQueue");
+        }
+        cellularNic: <default("LteNicUe")> like ICellularNic if hasCellular{
+            nodeType = parent.nodeType;
+            @display("p=355,589");
         }
     connections allowunconnected:
 
@@ -185,7 +173,6 @@ module Ue
         //#
 		//# Internal transport layer connections to network layer
 		//#
-
         udp.ipOut --> tn.in++ if hasUdp;
         udp.ipIn <-- tn.out++ if hasUdp;
 
@@ -214,10 +201,29 @@ module Ue
             nl.out++ --> lo[i].upperLayerIn;
             lo[i].upperLayerOut --> nl.in++;
         }
-        
-		for i=0..sizeof(radioIn)-1 {
+        for i=0..sizeof(wlanRadioIn)-1 {
             wlan[i].upperLayerOut --> nl.in++;
             wlan[i].upperLayerIn <-- nl.out++;
         }
-
+        for i=0..sizeof(ethg)-1 {
+            eth[i].upperLayerOut --> nl.in++;
+            eth[i].upperLayerIn <-- nl.out++;
+        }
+        for i=0..sizeof(ethg)-1 {
+            ethg[i] <--> { @display("m=s"); } <--> eth[i].phys;
+        }
+        for i=0..sizeof(wlanRadioIn)-1 {
+            wlanRadioIn[i] --> { @display("m=s"); } --> wlan[i].radioIn;
+        }
+        
+        if hasCellular{
+            cellularNic.upperLayerOut --> nl.in++;
+        	cellularNic.upperLayerIn <-- nl.out++;
+        
+        //#
+        //# Connections between LTE/NR NIC and the radio medium
+        //#
+        	cellularNic.radioIn <-- cellularRadioIn;
+        }
+        
 }
