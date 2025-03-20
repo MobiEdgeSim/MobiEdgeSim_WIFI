@@ -13,8 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package mobiedgesim.nodes.mobileNodes;
-
+package mobiedgesim.nodes.mecHost;
 import inet.applications.contract.IApp;
 import inet.common.MessageDispatcher;
 import inet.common.packet.recorder.PcapRecorder;
@@ -30,11 +29,14 @@ import inet.transportlayer.contract.IUdp;
 import inet.linklayer.contract.IWirelessInterface;
 import simu5g.stack.ICellularNic;
 
-module MobileNodeBase
+//
+// TODO auto-generated module
+//
+module MecHost
 {
     
     parameters:
-        //@networkNode();
+        @networkNode();
         
         @figure[applicationLayer](type=rectangle; pos=250,6; size=600,130; lineColor=#808080; cornerRadius=5; fillColor=#ffff00; fillOpacity=0.1);
         @figure[applicationLayer.title](type=text; pos=845,11; anchor=ne; text="application layer");
@@ -46,6 +48,8 @@ module MobileNodeBase
         @figure[linkLayer.title](type=text; pos=845,461; anchor=ne; text="link layer");
         @figure[submodules];
 
+		@display("i=device/server2;bgb=1000,679");
+
         //# Transport layer
         bool hasUdp = default(firstAvailableOrEmpty("Udp") != "");
         bool hasTcp = default(firstAvailableOrEmpty("Tcp", "TcpLwip", "TcpNsc") != "");
@@ -54,7 +58,7 @@ module MobileNodeBase
         bool hasIpv4 = default(true);
         bool hasIpv6 = default(false);
         bool hasCellular = default(false);
-        bool hasEth = default(false);
+        bool hasEth = default(true);
         bool hasWlan = default(true);
         
         cellularNic.mac.collectorModule = hasRNISupport ? "^.^.ueCollector" : "";
@@ -81,9 +85,9 @@ module MobileNodeBase
         interfaceTable: InterfaceTable {
             @display("p=127,257;is=s");
         }
-        mobility: <default("StationaryMobility")> like IMobility {
-            @display("p=127,172;is=s");
-        }
+//        mobility: <default("StationaryMobility")> like IMobility {
+//            @display("p=127,172;is=s");
+//        }
          //# link layer
         lo[numLoInterfaces]: <default("LoopbackInterface")> like ILoopbackInterface {
             parameters:
@@ -225,4 +229,5 @@ module MobileNodeBase
         //#
         	cellularNic.radioIn <-- cellularRadioIn;
         }
+    
 }

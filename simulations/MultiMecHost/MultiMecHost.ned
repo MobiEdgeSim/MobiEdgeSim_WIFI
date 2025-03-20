@@ -12,6 +12,7 @@ package mobiedgesim.simulations.MultiMecHost;
 
 import mobiedgesim.nodes.mobileNodes.mmecHost.MmecHost;
 import mobiedgesim.nodes.mobileNodes.ue.Ue;
+import mobiedgesim.nodes.mecHost.MecHost;
 import inet.visualizer.common.IntegratedMultiVisualizer;
 import inet.physicallayer.wireless.ieee80211.packetlevel.Ieee80211ScalarRadioMedium;
 import org.car2x.veins.subprojects.veins_inet.VeinsInetManager;
@@ -34,6 +35,12 @@ network MultiMecHost
         ue[0]: Ue {
             @display("p=412,244");
         }
+        mecHost1: MecHost{
+        };
+        mecHost2: MecHost{
+        };
+        mecHost3: MecHost{
+        };
         visualizer: IntegratedMultiVisualizer {
             @display("p=31,36");
         }
