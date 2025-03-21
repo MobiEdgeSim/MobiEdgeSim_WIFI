@@ -30,17 +30,20 @@ network MultiMecHost
         @display("bgb=732,483");
     submodules:
         mmecHost[0]: MmecHost {
-            @display("p=197,224");
+            @display("p=277,60");
         }
         ue[0]: Ue {
-            @display("p=412,244");
+            @display("p=368,60");
         }
-        mecHost1: MecHost{
-        };
-        mecHost2: MecHost{
-        };
-        mecHost3: MecHost{
-        };
+        mecHost1: MecHost {
+            @display("p=205,356");
+        }
+        mecHost2: MecHost {
+            @display("p=335,205");
+        }
+        mecHost3: MecHost {
+            @display("p=508,356");
+        }
         visualizer: IntegratedMultiVisualizer {
             @display("p=31,36");
         }

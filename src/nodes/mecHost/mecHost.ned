@@ -58,14 +58,14 @@ module MecHost
         bool hasIpv4 = default(true);
         bool hasIpv6 = default(false);
         bool hasCellular = default(false);
-        bool hasEth = default(true);
+        bool hasEth = default(false);
         bool hasWlan = default(true);
         
         cellularNic.mac.collectorModule = hasRNISupport ? "^.^.ueCollector" : "";
         cellularNic.phy.hasCollector = hasRNISupport;
 
         //settings for mobile 
-        mobility.typename = default("VeinsInetMobility");//# Mobility
+        //mobility.typename = default("StationaryMobility");//# Mobility
         *.routingTableModule = default(absPath(".ipv4.routingTable"));//# Network Layer specs
         *.interfaceTableModule = default(absPath(".interfaceTable"));
         ipv4.configurator.typename = "HostAutoConfigurator";
@@ -85,9 +85,9 @@ module MecHost
         interfaceTable: InterfaceTable {
             @display("p=127,257;is=s");
         }
-//        mobility: <default("StationaryMobility")> like IMobility {
-//            @display("p=127,172;is=s");
-//        }
+        mobility: <default("StationaryMobility")> like IMobility {
+            @display("p=127,172;is=s");
+        }
          //# link layer
         lo[numLoInterfaces]: <default("LoopbackInterface")> like ILoopbackInterface {
             parameters:

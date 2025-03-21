@@ -33,7 +33,7 @@ PROJECTRELATIVE_PATH = src
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/nodes/mobileNodes/mmecHost/mmecHost.o $O/nodes/mobileNodes/ue/ue.o $O/nodes/orchestrator/orchestrator.o
+OBJS = $O/nodes/mecHost/mecHost.o $O/nodes/mobileNodes/mmecHost/mmecHost.o $O/nodes/mobileNodes/ue/ue.o $O/nodes/orchestrator/orchestrator.o
 
 # Message files
 MSGFILES =
