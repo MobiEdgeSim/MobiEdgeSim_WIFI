@@ -24,6 +24,7 @@ import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
 network MultiMecHost
 {
     parameters:
+        **.mgmt.numChannels = 20;
         double playgroundSizeX @unit(m); // x size of the area the nodes are in (in meters)
         double playgroundSizeY @unit(m); // y size of the area the nodes are in (in meters)
         double playgroundSizeZ @unit(m); // z size of the area the nodes are in (in meters)
@@ -31,18 +32,28 @@ network MultiMecHost
     submodules:
         mmecHost[0]: MmecHost {
             @display("p=277,60");
+            wlan[*].mgmt.typename = "Ieee80211MgmtAdhoc";
+            wlan[*].agent.typename = "";
         }
         ue[0]: Ue {
             @display("p=368,60");
+            wlan[*].mgmt.typename = "Ieee80211MgmtAdhoc";
+            wlan[*].agent.typename = "";
         }
         mecHost1: MecHost {
             @display("p=205,356");
+            wlan[*].mgmt.typename = "Ieee80211MgmtAdhoc";
+            wlan[*].agent.typename = "";
         }
         mecHost2: MecHost {
-            @display("p=335,205");
+            @display("p=226,356");
+            wlan[*].mgmt.typename = "Ieee80211MgmtAdhoc";
+            wlan[*].agent.typename = "";
         }
         mecHost3: MecHost {
             @display("p=508,356");
+            wlan[*].mgmt.typename = "Ieee80211MgmtAdhoc";
+            wlan[*].agent.typename = "";
         }
         visualizer: IntegratedMultiVisualizer {
             @display("p=31,36");
@@ -55,6 +66,7 @@ network MultiMecHost
         }
         configurator: Ipv4NetworkConfigurator {
             @display("p=31,175");
+            //config = xml("<config><interface hosts='*' address='145.236.x.x' netmask='255.255.0.0'/></config>");
         }
     connections:
 
