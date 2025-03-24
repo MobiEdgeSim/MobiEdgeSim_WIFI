@@ -16,12 +16,12 @@
 package mobiedgesim.nodes.mobileNodes.mmecHost;
 
 
-import mobiedgesim.nodes.mobileNodes.MobileNodeBase;
+import mobiedgesim.nodes.SimpleNodeBase;
 
 //
 // TODO auto-generated module
 //
-module MmecHost extends MobileNodeBase
+module MmecHost extends SimpleNodeBase
 {
     parameters:
         @display("i=device/server2;bgb=1000,679");

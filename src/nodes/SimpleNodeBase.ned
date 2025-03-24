@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package mobiedgesim.nodes.mobileNodes;
+package mobiedgesim.nodes;
 
 import inet.applications.contract.IApp;
 import inet.common.MessageDispatcher;
@@ -30,7 +30,7 @@ import inet.transportlayer.contract.IUdp;
 import inet.linklayer.contract.IWirelessInterface;
 import simu5g.stack.ICellularNic;
 
-module MobileNodeBase
+module SimpleNodeBase
 {
     
     parameters:
