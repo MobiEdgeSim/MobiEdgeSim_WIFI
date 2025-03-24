@@ -17,17 +17,36 @@
 #define __MOBIEDGESIM_ORCHESTRATOR_H_
 
 #include <omnetpp.h>
+#include <vector>
+#include <string>
+#include "inet/common/geometry/common/Coord.h"
 
+namespace MobiEdgeSim {
 using namespace omnetpp;
 
-/**
- * TODO - Generated class
- */
-class Orchestrator : public cSimpleModule
+class Orchestrator : public inet::cSimpleModule
 {
   protected:
-    virtual void initialize() override;
-    virtual void handleMessage(cMessage *msg) override;
+    // 定时更新消息
+    inet::cMessage *updateMsg = nullptr;
+    // 更新周期（单位：秒）
+    inet::simtime_t updateInterval;
+    // 当前检测到的 mecHost 模块列表
+    std::vector<cModule*> mecHosts;
+
+    // 更新参数 mecHostList
+    void updateMecHostListParam();
+    // 查找所有 mecHost 模块，并更新 mecHosts 列表（如有变化则更新参数）
+    void updateMecHost();
+
+    // 根据当前位置信息返回所有符合条件的 mecHost 的信息字符串列表
+    std::vector<std::string> getMechostNames(inet::Coord currentCoord);
+
+  protected:
+    virtual void initialize(int stage) override;
+    virtual void handleMessage(inet::cMessage *msg) override;
+    virtual void finish() override;
 };
 
+}
 #endif

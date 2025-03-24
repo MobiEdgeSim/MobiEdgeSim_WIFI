@@ -20,4 +20,13 @@ package mobiedgesim.nodes.orchestrator;
 //
 simple Orchestrator
 {
+    parameters:
+        @display("i=device/mainframe;bgb=1006.50995,692.76");
+        @class(MobiEdgeSim::Orchestrator); 
+        
+        double updateInterval = default(1);    // time slot to update the mechosts list
+        
+        double wIFIDistance = default(100);//the distance limitations of wifi signal
+        
+        string mecHostList = default("")@mutable;
 }

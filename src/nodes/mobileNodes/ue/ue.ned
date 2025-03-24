@@ -30,7 +30,7 @@ import inet.transportlayer.contract.IUdp;
 import inet.linklayer.contract.IWirelessInterface;
 import simu5g.stack.ICellularNic;
 import mobiedgesim.nodes.SimpleNodeBase;
-import inet.applications.udpapp.UdpRequestResponseApp;
+import mobiedgesim.apps.UdpUeApp;
 //
 // TODO auto-generated module
 //
@@ -38,15 +38,15 @@ module Ue extends SimpleNodeBase
 {
     parameters:
         @display("i=device/pocketpc;bgb=858,659");
-
-    submodules:
-        udpApp: UdpRequestResponseApp {
-            parameters:
-
-                @display("p=675,80");
-        }
-    connections:
-        udpApp.socketOut --> at.in++;
-        udpApp.socketIn <-- at.out++;
+//
+//    submodules:
+//        udpUeApp: UdpUeApp {
+//            parameters:
+//
+//                @display("p=675,80");
+//        }
+//    connections:
+//        udpUeApp.socketOut --> at.in++;
+//        udpUeApp.socketIn <-- at.out++;
 
 }
