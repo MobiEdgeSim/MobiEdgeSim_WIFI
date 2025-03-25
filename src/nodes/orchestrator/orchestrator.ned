@@ -24,9 +24,29 @@ simple Orchestrator
         @display("i=device/mainframe;bgb=1006.50995,692.76");
         @class(MobiEdgeSim::Orchestrator); 
         
-        double updateInterval = default(1);    // time slot to update the mechosts list
+        double updateInterval @unit(s) = default(1s);    // time slot to update the mechosts list
         
         double wIFIDistance = default(100);//the distance limitations of wifi signal
         
         string mecHostList = default("")@mutable;
+        
+        
+        double spInterval @unit(s)= default(1s);
+        
+        //ue request service
+//        int minRamRequest = 2;
+//        int maxRamRequest = 16;
+//        int minDiskRequest = 20;
+//        int maxDiskRequest = 160;
+//        int minCpuRequest = 10;
+//        int maxCpuRequest = 160;
+        
+        string requiredServices = default("service1");
+        string algorithmName = default("RandomAlgorithm");
+        
+        
+        
+    	double ramRequest @unit("B") = default(2GB);
+    	double diskRequest @unit("B") = default(100GB);
+    	double cpuRequest = default(3000);// CPU's clock speed in Million Instruction per Seconds (MIPS)
 }

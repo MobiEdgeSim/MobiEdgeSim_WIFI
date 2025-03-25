@@ -38,15 +38,15 @@ module Ue extends SimpleNodeBase
 {
     parameters:
         @display("i=device/pocketpc;bgb=858,659");
-//
-//    submodules:
-//        udpUeApp: UdpUeApp {
-//            parameters:
-//
-//                @display("p=675,80");
-//        }
-//    connections:
-//        udpUeApp.socketOut --> at.in++;
-//        udpUeApp.socketIn <-- at.out++;
+
+    submodules:
+        udpUeApp: UdpUeApp {
+            parameters:
+
+                @display("p=675,80");
+        }
+    connections:
+        udpUeApp.socketOut --> at.in++;
+        udpUeApp.socketIn <-- at.out++;
 
 }

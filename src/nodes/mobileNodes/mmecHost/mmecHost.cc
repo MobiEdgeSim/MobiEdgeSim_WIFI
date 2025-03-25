@@ -14,15 +14,43 @@
 // 
 
 #include "mmecHost.h"
+#include "veins_inet/VeinsInetMobility.h"
+
+namespace MobiEdgeSim {
+
 
 Define_Module(MmecHost);
 
-void MmecHost::initialize()
-{
-    // TODO - Generated method body
+void MmecHost::initialize() {
+    currentInfo.name = getFullName();
+
+    //resource
+    double maxRam = par("maxRam").doubleValue();
+    double maxDisk = par("maxDisk").doubleValue();
+    double maxCpu = par("maxCpuSpeed").doubleValue();
+
+    double occupancy = uniform(0.2, 0.8);
+    currentInfo.availableRam = maxRam * (1 - occupancy);
+    currentInfo.availableDisk = maxDisk * (1 - occupancy);
+    currentInfo.availableCpu = maxCpu * (1 - occupancy);
+
+    currentInfo.ram = maxRam;
+    currentInfo.disk = maxDisk;
+    currentInfo.cpu = maxCpu;
+
+    cModule *mobilityModule = getSubmodule("mobility");
+    if (mobilityModule) {
+        auto mobility = check_and_cast<veins::VeinsInetMobility*>(mobilityModule);
+        const inet::Coord &pos = mobility->getCurrentPosition();
+        currentInfo.latitude = pos.x;
+        currentInfo.longitude = pos.y;
+    }else{
+
+    }
+
+    EV << "Mobile mecHost " << getFullName() << ", RAM: " << currentInfo.availableRam<< ", Disk: " << currentInfo.availableDisk << ", CPU: "<< currentInfo.availableCpu << "\n";
+
 }
 
-void MmecHost::handleMessage(cMessage *msg)
-{
-    // TODO - Generated method body
+
 }

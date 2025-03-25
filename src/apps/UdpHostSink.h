@@ -13,23 +13,23 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef __MOBIEDGESIM_MMECHOST_H_
-#define __MOBIEDGESIM_MMECHOST_H_
+#ifndef __MOBIEDGESIM_UDPECHOSINK_H_
+#define __MOBIEDGESIM_UDPECHOSINK_H_
 
+#include "inet/applications/udpapp/UdpSink.h"
 #include <omnetpp.h>
-#include "nodes/mecHost/mecHost.h"
-
 
 namespace MobiEdgeSim {
-using namespace omnetpp;
+
 
 /**
  * TODO - Generated class
  */
-class MmecHost: public MecHost {
+class UdpHostSink : public inet::UdpSink
+{
+  protected:
 
-protected:
-    virtual void initialize() override;
+    //virtual void socketDataArrived(inet::UdpSocket *socket, inet::Packet *packet) override;
 };
 
 }

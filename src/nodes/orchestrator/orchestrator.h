@@ -20,32 +20,65 @@
 #include <vector>
 #include <string>
 #include "inet/common/geometry/common/Coord.h"
+#include "nodes/mecHost/mecHost.h"
 
 namespace MobiEdgeSim {
 using namespace omnetpp;
 
 class Orchestrator : public inet::cSimpleModule
 {
+public:
+    struct AppDescriptorInfo {//ue service require
+        std::string name;
+        std::string ueIpAddress;
+        double ram;
+        double disk;
+        double cpu;
+        double latitude;
+        double longitude;
+    };
+
+
+    std::vector<MecHostInfo> mecHostInfos;
+
   protected:
-    // 定时更新消息
+
     inet::cMessage *updateMsg = nullptr;
-    // 更新周期（单位：秒）
-    inet::simtime_t updateInterval;
-    // 当前检测到的 mecHost 模块列表
+    inet::simtime_t updateInterval;//Update period (unit: seconds)
     std::vector<cModule*> mecHosts;
 
-    // 更新参数 mecHostList
+    // update mecHostList
     void updateMecHostListParam();
-    // 查找所有 mecHost 模块，并更新 mecHosts 列表（如有变化则更新参数）
     void updateMecHost();
-
-    // 根据当前位置信息返回所有符合条件的 mecHost 的信息字符串列表
+  public:
+    // Returns a list of all mecHost information that meet the conditions based on the current location information
     std::vector<std::string> getMechostNames(inet::Coord currentCoord);
+
+
+  protected:
+    //service placement
+    inet::cMessage *spMsg = nullptr;
+    std::vector<cModule*> ues;
+    inet::simtime_t spInterval;
+    void servicePlacement();
+    cModule* findBestMecHostForUE(cModule* ue);
+
+
+    // build service request
+    AppDescriptorInfo buildAppDescriptor(cModule* ue);
+    // build mecHost infor
+    std::vector<MecHostInfo> buildMecHostInfos();
 
   protected:
     virtual void initialize(int stage) override;
     virtual void handleMessage(inet::cMessage *msg) override;
     virtual void finish() override;
+
+    double requestRam;
+    double requestDisk;
+    double requestCpu;
+    std::string algorithmName;
+
 };
 
 }

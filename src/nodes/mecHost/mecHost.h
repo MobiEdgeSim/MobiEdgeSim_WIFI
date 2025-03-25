@@ -17,17 +17,49 @@
 #define __MOBIEDGESIM_MECHOST_H_
 
 #include <omnetpp.h>
+#include <vector>
+#include <string>
+
+namespace MobiEdgeSim {
 
 using namespace omnetpp;
 
-/**
- * TODO - Generated class
- */
+struct MecHostInfo {//mechost Infrastructure
+    std::string name;
+    double availableRam;
+    double availableDisk;
+    double availableCpu;
+    double latitude;
+    double longitude;
+    double ram;
+    double disk;
+    double cpu;
+    double latency;
+};
+
 class MecHost : public cSimpleModule
 {
   protected:
+    MecHostInfo currentInfo;
+
+  protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
+
+    double maxRam;
+    double maxDisk;
+    double maxCPU;
+    //allocated resources
+    double allocatedRam;
+    double allocatedDisk;
+    double allocatedCPU;
+
+  public:
+      const MecHostInfo& getMecHostInfo() const;
+      void updateResources(double allocatedRam, double allocatedDisk, double allocatedCPU);
+      void updateStatus(const MecHostInfo &newInfo);
 };
 
+
+}
 #endif

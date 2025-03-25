@@ -17,7 +17,7 @@ package mobiedgesim.nodes.mobileNodes.mmecHost;
 
 
 import mobiedgesim.nodes.SimpleNodeBase;
-
+import inet.applications.udpapp.UdpEchoApp;
 //
 // TODO auto-generated module
 //
@@ -25,5 +25,18 @@ module MmecHost extends SimpleNodeBase
 {
     parameters:
         @display("i=device/server2;bgb=1000,679");
+        @class(MobiEdgeSim::MmecHost);
+        
+        double maxRam @unit("B") = default(2GB);
+        double maxDisk @unit("B") = default(100GB);
+        double maxCpuSpeed = default(3000); 	 // CPU's clock speed in Million Instruction per Seconds (MIPS)
+    submodules:
+	    udpEchoApp : UdpEchoApp{
+	         parameters:
 
+                @display("p=675,80");
+	    }
+	 connections:
+	     udpEchoApp.socketOut --> at.in++;
+         udpEchoApp.socketIn <-- at.out++;
 }

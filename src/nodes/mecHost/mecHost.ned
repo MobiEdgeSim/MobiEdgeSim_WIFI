@@ -29,7 +29,7 @@ import inet.transportlayer.contract.IUdp;
 import inet.linklayer.contract.IWirelessInterface;
 import simu5g.stack.ICellularNic;
 import mobiedgesim.nodes.SimpleNodeBase;
-
+import inet.applications.udpapp.UdpEchoApp;
 //
 // TODO auto-generated module
 //
@@ -37,9 +37,27 @@ module MecHost extends SimpleNodeBase
 {
     
     parameters:
-
+		@class(MobiEdgeSim::MecHost); 
 		@display("i=device/server2;bgb=1000,679");
         //settings for mobile 
         mobility.typename = default("StationaryMobility");//# Mobility
+        
+        
+        double maxRam @unit("B") = default(2GB);
+        double maxDisk @unit("B") = default(100GB);
+        double maxCpuSpeed = default(3000); 	 // CPU's clock speed in Million Instruction per Seconds (MIPS)
+        
+        string requiredServices = default("service1");
+        
+	submodules:
+	    udpEchoApp : UdpEchoApp{
+	         parameters:
+
+                @display("p=675,80");
+	    }
+	 connections:
+	     udpEchoApp.socketOut --> at.in++;
+         udpEchoApp.socketIn <-- at.out++;
+            
     
 }
