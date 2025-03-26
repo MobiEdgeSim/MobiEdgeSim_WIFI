@@ -47,6 +47,7 @@ module MecHost extends SimpleNodeBase
         double maxDisk @unit("B") = default(100GB);
         double maxCpuSpeed = default(3000); 	 // CPU's clock speed in Million Instruction per Seconds (MIPS)
         
+        double updatePositionInterval @unit(s) = default(1s);
         string requiredServices = default("service1");
         
 	submodules:

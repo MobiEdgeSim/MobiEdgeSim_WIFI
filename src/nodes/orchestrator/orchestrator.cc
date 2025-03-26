@@ -28,6 +28,7 @@
 #include "nodes/mecHost/mecHost.h"
 #include "scheduler/MetaheuristicScheduler.h"
 #include "apps/UdpUeApp.h"
+#include "inet/networklayer/common/L3AddressResolver.h"
 // Emulation debug
 #include <iostream>
 
@@ -55,7 +56,7 @@ void Orchestrator::initialize(int stage)
     updateMsg = new cMessage("updateMecHost");
     spMsg = new cMessage("servicePlacement");
     scheduleAt(simTime() + updateInterval, updateMsg);
-    scheduleAt(simTime() + spInterval, spMsg);
+    scheduleAt(simTime() +2+ spInterval, spMsg);
 
     requestRam = par("ramRequest").doubleValue();
     requestDisk = par("diskRequest").doubleValue();;
@@ -69,18 +70,16 @@ void Orchestrator::initialize(int stage)
 
 void Orchestrator::handleMessage(cMessage *msg)
 {
-    if (msg->isSelfMessage()) {
-        if(strcmp(msg->getName(), "updateMecHost") == 0){
-            updateMecHost();
-            scheduleAt(simTime() + updateInterval, updateMsg);
-        }else if(strcmp(msg->getName(), "servicePlacement") == 0)
-            servicePlacement();
-            // 先取消之前调度的 spMsg（如果仍在队列中）
-            if (spMsg->isScheduled())
-                cancelEvent(spMsg);
-            scheduleAt(simTime() + spInterval, spMsg);
-    }else
-        delete msg;
+    if (strcmp(msg->getName(), "updateMecHost") == 0) {
+        updateMecHost();
+        scheduleAt(simTime() + updateInterval, updateMsg);
+    } else if (strcmp(msg->getName(), "servicePlacement") == 0) {
+        servicePlacement();
+        // 先取消之前调度的 spMsg（如果仍在队列中）
+        if (spMsg->isScheduled())
+            cancelEvent(spMsg);
+        scheduleAt(simTime() + spInterval, spMsg);
+    }
 }
 
 void Orchestrator::updateMecHost()
@@ -138,52 +137,36 @@ void Orchestrator::updateMecHostListParam()
 
 std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
 {
-    EV << "Orchestrator::getMechostNames " << endl;
+    EV << "Orchestrator::getMechostNames -- Calculating distance limitations" << endl;
     std::vector<std::string> hostList;
     double wIFIDistance = par("wIFIDistance").doubleValue();
 
-    cModule *systemModule = getSimulation()->getSystemModule();
-    for (cModule::SubmoduleIterator it(systemModule); !it.end(); ++it) {
-        cModule *mod = *it;
-        bool matches = false;
-        if (strcmp(mod->getName(), "mecHost") == 0)
-            matches = true;
-        std::string fullName = mod->getFullName();
-        if (fullName.size() >= 8 && fullName.substr(fullName.size() - 8) == "mechost")
-            matches = true;
-        if (matches) {
-            inet::Coord pos;
-            if (mod->isVector()) {
-                cModule *mobilityModule = mod->getSubmodule("mobility");
-                if (mobilityModule) {
-                    veins::VeinsInetMobility *mobility = check_and_cast<veins::VeinsInetMobility*>(mobilityModule);
-                    inet::Coord lastPosition = mobility->getCurrentPosition();
-                    pos.x = std::round(lastPosition.x * 1000.0) / 1000.0;
-                    pos.y = std::round(lastPosition.y * 1000.0) / 1000.0;
-                    pos.z = std::round(lastPosition.z * 1000.0) / 1000.0;
-                }
-                else {
-                    pos.x = pos.y = pos.z = 0;
-                }
-            }
-            else {
-                pos.x = mod->par("latitude").doubleValue();
-                pos.y = mod->par("longitude").doubleValue();
-                pos.z = 0;
-            }
-            double dx = pos.x - currentCoord.x;
-            double dy = pos.y - currentCoord.y;
-            double dz = pos.z - currentCoord.z;
-            double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+    // 遍历 orchestrator 内部维护的 mecHosts
+       for (auto mod : mecHosts) {
+           // 直接获取 MEC host 模块中保存的 currentInfo
+           MecHost *mecHost = check_and_cast<MecHost*>(mod);
+           const MecHostInfo &info = mecHost->getMecHostInfo();
 
-            if (distance <= wIFIDistance) {
-                EV << mod->getFullName() << ": (" << pos.x << ", " << pos.y << ", " << pos.z << ")"
-                   << ", distance: " << distance << "\n";
-                hostList.push_back(mod->getFullName());
-            }
-        }
-    }
-    return hostList;
+           // 使用 currentInfo 中保存的 latitude 和 longitude 作为位置
+           inet::Coord pos;
+           pos.x = info.latitude;
+           pos.y = info.longitude;
+           pos.z = 0;  // 假设 z 坐标为 0
+
+           // 计算与当前坐标的欧氏距离
+           double dx = pos.x - currentCoord.x;
+           double dy = pos.y - currentCoord.y;
+           double dz = pos.z - currentCoord.z;
+           double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+           EV << "Distance from " << mod->getFullName() << " = " << distance << endl;
+           if (distance <= wIFIDistance) {
+               EV << mod->getFullName() << ": (" << pos.x << ", " << pos.y << ", " << pos.z
+                  << "), distance: " << distance << "\n";
+               hostList.push_back(mod->getFullName());
+           }
+       }
+       return hostList;
 }
 
 // construct UE  AppDescriptorInfo
@@ -213,7 +196,10 @@ Orchestrator::AppDescriptorInfo Orchestrator::buildAppDescriptor(cModule* ue)
     appInfo.cpu = requestCpu * (1 - occupancy);
 
     // UE IP address
-    appInfo.ueIpAddress = ue->par("ipAddress").stdstringValue();
+    inet::L3AddressResolver resolver;
+    inet::L3Address ueAddr = resolver.resolve(ue->getFullName());
+    appInfo.ueIpAddress = ueAddr.str();
+
 
     EV << "Built AppDescriptor for UE " << ue->getFullName() << ": RAM=" << appInfo.ram
        << ", Disk=" << appInfo.disk << ", CPU=" << appInfo.cpu << ", Position=(" << appInfo.latitude << ", " << appInfo.longitude << ")\n";
@@ -258,7 +244,6 @@ cModule* Orchestrator::findBestMecHostForUE(cModule* ue)
     } else {
         EV << "UdpUeApp module not found in UE " << ue->getFullName() << "\n";
     }
-
 
     // 调用 MetaheuristicScheduler 进行调度
     MetaheuristicScheduler scheduler(appInfo, hostInfos, algorithmName);

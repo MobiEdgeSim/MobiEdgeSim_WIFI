@@ -31,7 +31,7 @@ void UdpUeApp::initialize(int stage)
         // 创建更新目的地址的自消息，间隔从参数读取
         updateDestInterval = par("updateDestInterval").doubleValue();
         updateDestMsg = new cMessage("updateDestAddresses");
-        scheduleAt(simTime() + updateDestInterval, updateDestMsg);
+        scheduleAt(simTime() +1+ updateDestInterval, updateDestMsg);//add 1s as start time
     }
 }
 void UdpUeApp::handleMessage(cMessage *msg)
@@ -53,14 +53,15 @@ void UdpUeApp::updateDestAddresses()
     // 获取 orchestrator 模块
     // 假设 orchestrator 的 NED 模块名称为 "orchestrator" 位于网络层的某处，例如 "network.orchestrator"
     // 你可以根据实际情况修改路径
-    MobiEdgeSim::Orchestrator *orch = check_and_cast<MobiEdgeSim::Orchestrator*>(getModuleByPath("network.orchestrator"));
+    MobiEdgeSim::Orchestrator *orch = check_and_cast<MobiEdgeSim::Orchestrator*>(getSimulation()->getSystemModule()->getSubmodule("orchestrator"));
+
     if (!orch) {
         EV_WARN << "Orchestrator module not found, cannot update destination addresses.\n";
         return;
     }
     // 这里构造一个当前位置，可以从自身的 mobility 模块获取
     inet::Coord currentCoord;
-    cModule *mobilityModule = getSubmodule("mobility");
+    cModule *mobilityModule = getParentModule()->getSubmodule("mobility");
     if (mobilityModule) {
         auto mobility = check_and_cast<veins::VeinsInetMobility*>(mobilityModule);
         currentCoord = mobility->getCurrentPosition();
@@ -69,6 +70,7 @@ void UdpUeApp::updateDestAddresses()
         currentCoord.y = par("longitude").doubleValue();
         currentCoord.z = 0;
     }
+    EV<<"current latitude"<<currentCoord.x<<"longitude"<<currentCoord.y<<endl;
     // 调用 orchestrator 的接口获取范围内的 MEC host 名称
     std::vector<std::string> hostNames = orch->getMechostNames(currentCoord);
 
@@ -81,13 +83,25 @@ void UdpUeApp::updateDestAddresses()
         if (inet::L3AddressResolver().tryResolve(hostName.c_str(), addr))
             destAddresses.push_back(addr);
         else
-            EV_WARN << "Cannot resolve host name: " << hostName << "\n";
+            EV << "Cannot resolve host name: " << hostName << "\n";
     }
     EV << "Updated destAddresses: ";
     for (auto &addr : destAddresses) {
         EV << addr << " ";
     }
     EV << "\n";
+
+    if (!destAddresses.empty()) {
+        // 如果更新后存在目的地址，则触发一次发送操作
+        EV << "Triggering send after updating destination addresses." << endl;
+        // 可以调用 processSend() 或者安排 selfMsg
+
+        if (selfMsg->isScheduled())
+            cancelEvent(selfMsg);
+        selfMsg->setKind(SEND);
+        processSend();
+    }
+
 }
 void UdpUeApp::processPacket(inet::Packet *packet)
 {
