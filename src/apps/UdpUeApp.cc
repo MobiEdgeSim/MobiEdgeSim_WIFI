@@ -20,7 +20,8 @@
 #include "inet/networklayer/common/L3AddressResolver.h"
 #include "nodes/orchestrator/orchestrator.h"
 #include "veins_inet/VeinsInetMobility.h"
-
+#include "inet/applications/base/ApplicationPacket_m.h"
+#include "TimestampedPacket_m.h"
 namespace MobiEdgeSim {
 
 Define_Module(UdpUeApp);
@@ -105,34 +106,62 @@ void UdpUeApp::updateDestAddresses()
 }
 void UdpUeApp::processPacket(inet::Packet *packet)
 {
-    // 提取创建时间标签以计算 RTT
-    auto creationTimeTag = packet->findTag<inet::CreationTimeTag>();
-    if (creationTimeTag) {
-        omnetpp::simtime_t rtt = omnetpp::simTime() - creationTimeTag->getCreationTime();
+    EV << "UdpUeApp::processPacket received packet: " << packet->getName() << endl;
+    const auto& appPkt = packet->peekAtFront<TimestampedPacket>();
 
-        // 提取来源地址标签获得远程 IP
-        auto addressTag = packet->findTag<inet::L3AddressInd>();
-        std::string remoteIp;
-        if (addressTag)
-            remoteIp = addressTag->getSrcAddress().str();
-        else
-            remoteIp = "unknown";
-        inet::L3Address addr(remoteIp.c_str());
-        cModule *hostModule = inet::L3AddressResolver().findHostWithAddress(addr);
-        std::string senderFullName = hostModule ? hostModule->getFullName() : "unknown";
+    simtime_t delay = simTime() - appPkt->getSendTime();
+    EV << "RTT delay = " << delay << "s" << endl;
 
-        EV << "RTT from remote " << senderFullName << " = " << rtt << " s" << omnetpp::endl;
-        // 保存 RTT 信息到 map 中（更新最新值）
-        rttMap[senderFullName] = rtt;
-    }
-    // 调用父类逻辑（统计、删除包等）
-    inet::UdpBasicApp::processPacket(packet);
+    auto srcAddrTag = packet->findTag<inet::L3AddressInd>();
+    if (srcAddrTag) {
+            auto addr = srcAddrTag->getSrcAddress();
+            auto *host = inet::L3AddressResolver().findHostWithAddress(addr);
+            std::string hostName = host ? host->getFullName() : addr.str();
+            rttMap[hostName] = delay;
+            EV << "Saved RTT to rttMap[" << hostName << "] = " << delay << "s" << endl;
+        }
+    // 父类处理
+    UdpBasicApp::processPacket(packet);
 }
+
 void UdpUeApp::finish()
 {
     cancelAndDelete(updateDestMsg);
     inet::UdpBasicApp::finish();
 }
+
+void UdpUeApp::sendPacket()
+{
+    auto packet = new inet::Packet("UdpBasicAppData");
+
+    const auto& appPkt = inet::makeShared<TimestampedPacket>();
+    appPkt->setSendTime(simTime());
+    appPkt->setSequenceNumber(numSent);
+    appPkt->setPayloadSize(par("messageLength").intValue());
+    appPkt->setChunkLength(inet::B(par("messageLength")));
+
+    packet->insertAtBack(appPkt);
+    emit(inet::packetSentSignal, packet);
+    socket.sendTo(packet, chooseDestAddr(), destPort);
+    numSent++;
+
+}
+
+
+//std::ostringstream str;
+//str << packetName << "-" << numSent;
+//Packet *packet = new Packet(str.str().c_str());
+//if (dontFragment)
+//    packet->addTag<FragmentationReq>()->setDontFragment(true);
+//const auto& payload = makeShared<ApplicationPacket>();
+//payload->setChunkLength(B(par("messageLength")));
+//payload->setSequenceNumber(numSent);
+//payload->addTag<CreationTimeTag>()->setCreationTime(simTime());
+//packet->insertAtBack(payload);
+//L3Address destAddr = chooseDestAddr();
+//emit(packetSentSignal, packet);
+//socket.sendTo(packet, destAddr, destPort);
+//numSent++;
 
 } // namespace MobiEdgeSim
 

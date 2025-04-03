@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for MobiEdgeSim
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -KINET_PROJ=../../inet -KSIMU5G_PROJ=../../Simu5G -KVEINS_INET_PROJ=../../veins_inet -KVEINS_PROJ=../../veins -DINET_IMPORT -DVEINS_INET_IMPORT -L$$\(INET_PROJ\)/src -L$$\(SIMU5G_PROJ\)/src -L$$\(VEINS_INET_PROJ\)/src -lINET$$\(D\) -lsimu5g$$\(D\) -lveins_inet$$\(D\)
+#  opp_makemake -f --deep -KINET_PROJ=../../inet -KSIMU5G_PROJ=../../Simu5G -KVEINS_INET_PROJ=../../veins_inet -KVEINS_PROJ=../../veins -DINET_IMPORT -DVEINS_INET_IMPORT -I/usr/lib/jvm/java-11-openjdk-amd64/include -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux -I/usr/lib/jvm/java-11-openjdk-amd64/lib -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server -I$$\(INET_PROJ\)/src -I$$\(SIMU5G_PROJ\)/src -I$$\(VEINS_INET_PROJ\)/src -I$$\(VEINS_PROJ\)/src -I. -L/usr/lib/jvm/java-11-openjdk-amd64/lib/server -L$$\(INET_PROJ\)/src -L$$\(SIMU5G_PROJ\)/src -L$$\(VEINS_INET_PROJ\)/src -lINET$$\(D\) -lsimu5g$$\(D\) -lveins_inet$$\(D\)
 #
 
 # Name of target to be created (-o option)
@@ -19,13 +19,22 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(QTENV_LIBS) $(CMDENV_LIBS)
 #USERIF_LIBS = $(QTENV_LIBS)
 
 # C++ include paths (with -I)
-INCLUDE_PATH =
+INCLUDE_PATH = \
+    -I/usr/lib/jvm/java-11-openjdk-amd64/include \
+    -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux \
+    -I/usr/lib/jvm/java-11-openjdk-amd64/lib \
+    -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server \
+    -I$(INET_PROJ)/src \
+    -I$(SIMU5G_PROJ)/src \
+    -I$(VEINS_INET_PROJ)/src \
+    -I$(VEINS_PROJ)/src \
+    -I.
 
 # Additional object and library files to link with
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = $(LDFLAG_LIBPATH)$(INET_PROJ)/src $(LDFLAG_LIBPATH)$(SIMU5G_PROJ)/src $(LDFLAG_LIBPATH)$(VEINS_INET_PROJ)/src  -lINET$(D) -lsimu5g$(D) -lveins_inet$(D)
+LIBS = $(LDFLAG_LIBPATH)/usr/lib/jvm/java-11-openjdk-amd64/lib/server $(LDFLAG_LIBPATH)$(INET_PROJ)/src $(LDFLAG_LIBPATH)$(SIMU5G_PROJ)/src $(LDFLAG_LIBPATH)$(VEINS_INET_PROJ)/src  -lINET$(D) -lsimu5g$(D) -lveins_inet$(D)
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -33,10 +42,20 @@ PROJECTRELATIVE_PATH = src
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/nodes/mecHost/mecHost.o $O/nodes/mobileNodes/mmecHost/mmecHost.o $O/nodes/mobileNodes/ue/ue.o $O/nodes/orchestrator/orchestrator.o
+OBJS = \
+    $O/apps/UdpHostSink.o \
+    $O/apps/UdpUeApp.o \
+    $O/nodes/mecHost/mecHost.o \
+    $O/nodes/mobileNodes/mmecHost/mmecHost.o \
+    $O/nodes/mobileNodes/ue/ue.o \
+    $O/nodes/orchestrator/orchestrator.o \
+    $O/scheduler/JVMManager.o \
+    $O/scheduler/MetaheuristicScheduler.o \
+    $O/apps/TimestampedPacket_m.o
 
 # Message files
-MSGFILES =
+MSGFILES = \
+    apps/TimestampedPacket.msg
 
 # SM files
 SMFILES =
@@ -66,7 +85,7 @@ include $(CONFIGFILE)
 # Simulation kernel and user interface libraries
 OMNETPP_LIBS = $(OPPMAIN_LIB) $(USERIF_LIBS) $(KERNEL_LIBS) $(SYS_LIBS)
 ifneq ($(PLATFORM),win32)
-LIBS += -Wl,-rpath,$(abspath $(INET_PROJ)/src) -Wl,-rpath,$(abspath $(SIMU5G_PROJ)/src) -Wl,-rpath,$(abspath $(VEINS_INET_PROJ)/src)
+LIBS += -Wl,-rpath,$(abspath /usr/lib/jvm/java-11-openjdk-amd64/lib/server) -Wl,-rpath,$(abspath $(INET_PROJ)/src) -Wl,-rpath,$(abspath $(SIMU5G_PROJ)/src) -Wl,-rpath,$(abspath $(VEINS_INET_PROJ)/src)
 endif
 
 COPTS = $(CFLAGS) $(IMPORT_DEFINES) -DINET_IMPORT -DVEINS_INET_IMPORT $(INCLUDE_PATH) -I$(OMNETPP_INCL_DIR)

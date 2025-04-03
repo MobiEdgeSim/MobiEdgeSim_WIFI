@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Simulations>
+  <Simulation>
+    <ConfigNames>combination1_HHO</ConfigNames>
+    <StartTime>2025-04-01 08:33:43</StartTime>
+    <StopTime>2025-04-01 08:33:54</StopTime>
+    <ElapsedTime>11</ElapsedTime>
+  </Simulation>
+  <Simulation>
+    <ConfigNames>combination2_HHO</ConfigNames>
+    <StartTime>2025-04-01 08:33:54</StartTime>
+    <StopTime>2025-04-01 08:34:15</StopTime>
+    <ElapsedTime>21</ElapsedTime>
+  </Simulation>
+  <Simulation>
+    <ConfigNames>combination3_HHO</ConfigNames>
+    <StartTime>2025-04-01 08:34:15</StartTime>
+    <StopTime>2025-04-01 08:34:27</StopTime>
+    <ElapsedTime>12</ElapsedTime>
+  </Simulation>
+  <Simulation>
+    <ConfigNames>combination4_HHO</ConfigNames>
+    <StartTime>2025-04-01 08:34:27</StartTime>
+    <StopTime>2025-04-01 08:34:49</StopTime>
+    <ElapsedTime>22</ElapsedTime>
+  </Simulation>
+</Simulations>

@@ -30,6 +30,7 @@ import inet.linklayer.contract.IWirelessInterface;
 import simu5g.stack.ICellularNic;
 import mobiedgesim.nodes.SimpleNodeBase;
 import inet.applications.udpapp.UdpEchoApp;
+import mobiedgesim.apps.UdpHostSink;
 //
 // TODO auto-generated module
 //
@@ -51,14 +52,14 @@ module MecHost extends SimpleNodeBase
         string requiredServices = default("service1");
         
 	submodules:
-	    udpEchoApp : UdpEchoApp{
+	    udpHostSink : UdpHostSink{
 	         parameters:
 
                 @display("p=675,80");
 	    }
 	 connections:
-	     udpEchoApp.socketOut --> at.in++;
-         udpEchoApp.socketIn <-- at.out++;
+	     udpHostSink.socketOut --> at.in++;
+         udpHostSink.socketIn <-- at.out++;
             
     
 }

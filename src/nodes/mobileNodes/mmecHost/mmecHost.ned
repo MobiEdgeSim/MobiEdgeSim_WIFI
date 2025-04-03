@@ -18,6 +18,7 @@ package mobiedgesim.nodes.mobileNodes.mmecHost;
 
 import mobiedgesim.nodes.SimpleNodeBase;
 import inet.applications.udpapp.UdpEchoApp;
+import mobiedgesim.apps.UdpHostSink;
 //
 // TODO auto-generated module
 //
@@ -31,12 +32,12 @@ module MmecHost extends SimpleNodeBase
         double maxDisk @unit("B") = default(100GB);
         double maxCpuSpeed = default(3000); 	 // CPU's clock speed in Million Instruction per Seconds (MIPS)
     submodules:
-	    udpEchoApp : UdpEchoApp{
+	    udpHostSink : UdpHostSink{
 	         parameters:
 
                 @display("p=675,80");
 	    }
 	 connections:
-	     udpEchoApp.socketOut --> at.in++;
-         udpEchoApp.socketIn <-- at.out++;
+	     udpHostSink.socketOut --> at.in++;
+         udpHostSink.socketIn <-- at.out++;
 }

@@ -3,13 +3,13 @@
 // 
 
 package mobiedgesim.apps;
-import inet.applications.udpapp.UdpSinkApp;
+import inet.applications.udpapp.UdpEchoApp;
 
 //
 // TODO auto-generated module
 //
-module UdpEchoSink extends UdpSinkApp
+module UdpHostSink extends UdpEchoApp
 {
     parameters:
-        @class("MobiEdgeSim : UdpEchoSink");
+        @class("MobiEdgeSim::UdpHostSink");
 }

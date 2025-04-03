@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/routes_file.xsd">
+    <vType id="bus__bus" vClass="bus" maxSpeed="50" accel="1.5" decel="3.0" length="12" sigma="1.0"/>
+    
+    <trip id="bus_1" depart="0.01" from="-282469710#1" to="-5825856#2" type="bus__bus" />
+    <trip id="bus_2" depart="0.06" from="927793497" to="256045302#2" type="bus__bus" />
+    <trip id="bus_3" depart="0.11" from="-35060878#2" to="-122817907" type="bus__bus" />
+    <trip id="bus_4" depart="0.16" from="-32456019#5" to="7415911#0" type="bus__bus" />
+    <trip id="bus_5" depart="0.21" from="56044068#0" to="1083272386" type="bus__bus" />
+    <trip id="bus_6" depart="0.26" from="4937391#0" to="44369404#0" type="bus__bus" />
+    <trip id="bus_7" depart="0.31" from="4937063#6" to="75741007" type="bus__bus" />
+    <trip id="bus_8" depart="0.36" from="-22973973#0" to="-33238674" type="bus__bus" />
+    <trip id="bus_9" depart="0.41" from="-354359921#1" to="-326772512#1" type="bus__bus" />
+    <trip id="bus_10" depart="0.46" from="-26192220#1" to="-42299052" type="bus__bus" />
+    <trip id="bus_11" depart="0.51" from="-13866340#2" to="1082775126" type="bus__bus" />
+    <trip id="bus_12" depart="0.56" from="-13871250" to="-32456043#0" type="bus__bus" />
+    <trip id="bus_13" depart="0.61" from="279100452#2" to="-1080987236#1" type="bus__bus" />
+    <trip id="bus_14" depart="0.66" from="36893592#0" to="14047195" type="bus__bus" />
+    <trip id="bus_15" depart="0.71" from="44409756#0" to="22560241" type="bus__bus" />
+    <trip id="bus_16" depart="0.76" from="39523885#10" to="48204019#0" type="bus__bus" />
+    <trip id="bus_17" depart="0.81" from="-1159826837" to="36711539#0" type="bus__bus" />
+    <trip id="bus_18" depart="0.86" from="394233223#0" to="-33911137#2" type="bus__bus" />
+    <trip id="bus_19" depart="0.91" from="-114208222#0" to="-317145973#2" type="bus__bus" />
+    <trip id="bus_20" depart="0.96" from="-4629001#1" to="4829626#0" type="bus__bus" />
+</routes>

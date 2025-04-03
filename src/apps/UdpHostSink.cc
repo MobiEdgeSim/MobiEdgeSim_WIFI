@@ -16,38 +16,40 @@
 #include "inet/common/TimeTag_m.h"
 #include "inet/common/packet/Packet.h"
 #include "UdpHostSink.h"
+#include "inet/networklayer/common/L3AddressTag_m.h"
+#include "inet/transportlayer/common/L4PortTag_m.h"
+
 
 namespace MobiEdgeSim {
 
 Define_Module(UdpHostSink);
 
-//void socketDataArrived(inet::UdpSocket *socket, inet::Packet *packet)
+//void UdpHostSink::socketDataArrived(inet::UdpSocket *socket, inet::Packet *pk)
 //{
-//    // (1) 构造要回的包, 附带 CreationTimeTag 或者原包复制
-//    auto reply = packet->dup();
-//    reply->setName("EchoReply");
+//    auto remoteAddress = pk->getTag<inet::L3AddressInd>()->getSrcAddress();
+//    int srcPort = pk->getTag<inet::L4PortInd>()->getSrcPort();
 //
-//    // (2) 取出源地址和端口 (适合老版本: UdpControlInfo 或 L3AddressTag)
-//    auto ctrl = packet->getTag<inet::UdpControlInfo>();
-//    if (!ctrl) {
-//        EV_WARN << "No UdpControlInfo, cannot echo" << endl;
-//        emit(packetReceivedSignal, packet);
-//        delete packet;
-//        delete reply;
-//        numReceived++;
-//        return;
-//    }
-//    inet::L3Address srcAddr = ctrl->getSrcAddr();
-//    int srcPort = ctrl->getSrcPort();
+//    EV << "UdpHostSink received packet: " << pk->getName() << " from "
+//       << remoteAddress << ":" << srcPort << inet::endl;
 //
-//    // (3) 回包
-//    socket->sendTo(reply, srcAddr, srcPort);
+//    auto echoPacket = pk->dup();
 //
-//    // (4) 父类默认会 delete packet; 这里也可手动统计
-//    emit(packetReceivedSignal, packet);
-//    delete packet;
-//    numReceived++;
+//    std::string originalName = pk->getName();
+//    std::string echoPrefix = "Echo-";
+////    if (originalName.find(echoPrefix) != 0) {
+////        echoPacket->setName((echoPrefix + originalName).c_str());
+////    } else {
+////        echoPacket->setName(("EchoReply-" + std::to_string(numEchoed)).c_str());
+////    }
+//    //echoPacket->setName(("Echo-" + std::string(pk->getName())).c_str());
+//
+//    // 发回
+//    socket->sendTo(echoPacket, remoteAddress, srcPort);
+//    delete pk;
+//
+//    numEchoed++;
 //}
+
 
 
 }

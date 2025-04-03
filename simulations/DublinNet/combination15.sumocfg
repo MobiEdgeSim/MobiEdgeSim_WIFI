@@ -1,0 +1,11 @@
+<configuration>
+  <input>
+    <net-file value="osm.net.xml"/>
+    <route-files value="ambulance.fast.high.trips.xml, bus.fast.low.trips.xml"/>
+  </input>
+  <time>
+    <begin value="0"/>
+    <end value="600"/>
+    <step-length value="0.1"/>
+  </time>
+</configuration>

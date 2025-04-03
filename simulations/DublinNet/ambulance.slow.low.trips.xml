@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes>
+  <vType id="ambulance" length="6.00" maxSpeed="4.00" color="red" accel="2.0" decel="4.5" sigma="0.5"/>
+
+  <trip id="ambulance_1" depart="0" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_2" depart="1" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_3" depart="2" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_4" depart="3" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_5" depart="4" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_6" depart="5" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_7" depart="6" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_8" depart="7" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_9" depart="8" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_10" depart="9" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_11" depart="10" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_12" depart="11" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_13" depart="12" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_14" depart="13" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_15" depart="14" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_16" depart="15" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_17" depart="16" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_18" depart="17" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_19" depart="18" from="-927793498#3" to="-3789702" type="ambulance"/>
+  <trip id="ambulance_20" depart="19" from="-927793498#3" to="-3789702" type="ambulance"/>
+  
+</routes>

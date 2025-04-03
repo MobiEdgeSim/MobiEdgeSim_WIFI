@@ -16,19 +16,18 @@
 #ifndef __MOBIEDGESIM_UDPECHOSINK_H_
 #define __MOBIEDGESIM_UDPECHOSINK_H_
 
-#include "inet/applications/udpapp/UdpSink.h"
+#include "inet/applications/udpapp/UdpEchoApp.h"
+#include "inet/common/TimeTag_m.h"
+#include "inet/common/packet/Packet.h"
 #include <omnetpp.h>
 
 namespace MobiEdgeSim {
 
 
-/**
- * TODO - Generated class
- */
-class UdpHostSink : public inet::UdpSink
+class UdpHostSink : public inet::UdpEchoApp
 {
   protected:
-
+    //virtual void socketDataArrived(inet::UdpSocket *socket, inet::Packet *pk) override;
     //virtual void socketDataArrived(inet::UdpSocket *socket, inet::Packet *packet) override;
 };
 

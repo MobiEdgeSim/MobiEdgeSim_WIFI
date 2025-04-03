@@ -37,6 +37,7 @@ protected:
     virtual void processPacket(inet::Packet *packet) override;
 
     void updateDestAddresses();
+    void sendPacket();
 public:
     // 供外部查询延迟数据的接口
     const std::map<std::string, omnetpp::simtime_t>& getRttMap() const { return rttMap; }

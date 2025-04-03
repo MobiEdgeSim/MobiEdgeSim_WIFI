@@ -1,0 +1,6 @@
+<launch>
+  <copy file="osm.net.xml"/>
+  <copy file="ambulance.slow.high.trips.xml"/>
+  <copy file="bus.slow.high.trips.xml"/>
+  <copy file="combination6.sumocfg" type="config"/>
+</launch>

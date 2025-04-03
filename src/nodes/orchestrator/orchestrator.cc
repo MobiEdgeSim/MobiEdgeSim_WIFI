@@ -55,8 +55,8 @@ void Orchestrator::initialize(int stage)
     // initial the update time interval
     updateMsg = new cMessage("updateMecHost");
     spMsg = new cMessage("servicePlacement");
-    scheduleAt(simTime() + updateInterval, updateMsg);
-    scheduleAt(simTime() +2+ spInterval, spMsg);
+    scheduleAt(simTime() + 2 + updateInterval, updateMsg);
+    scheduleAt(simTime() + 2 + spInterval, spMsg);
 
     requestRam = par("ramRequest").doubleValue();
     requestDisk = par("diskRequest").doubleValue();;
@@ -235,6 +235,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule* ue)
         for (auto &hostInfo : hostInfos) {
             auto it = rttMap.find(hostInfo.name);
             if (it != rttMap.end()) {
+                EV<<"Orchestrator get latency!!!!"<<endl;
                 hostInfo.latency = it->second.dbl(); // 将 simtime_t 转为 double
             } else {
                 // 如果没有找到对应的延迟，设置一个默认较高的延迟（例如 1e6）
