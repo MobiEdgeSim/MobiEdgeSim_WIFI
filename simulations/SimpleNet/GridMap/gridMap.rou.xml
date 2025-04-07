@@ -1,0 +1,64 @@
+<routes>
+  <!--Namespace(N=75, filecount=None, input='routes.txt', launch=False, output='singleIntersection.rou.xml', quarter=100)-->
+  <vType id="bus" accel="2.00" decel="4.00" sigma="0.65" length="8.05" minGap="1.00" maxSpeed="22.84" vClass="truck" guiShape="bus" probability="0.001" />
+  <route id="A0A4" edges="A0A1 A1A2 A2A3 A3A4"/>
+  <route id="B0B4" edges="B0B1 B1B2 B2B3 B3B4"/>
+  <route id="C0C4" edges="C0C1 C1C2 C2C3 C3C4"/>
+  <route id="D0D4" edges="D0D1 D1D2 D2D3 D3D4"/>
+  <route id="E0E4" edges="E0E1 E1E2 E2E3 E3E4"/>
+  
+  <route id="A0E0" edges="A0B0 B0C0 C0D0 D0E0"/>
+  <route id="A1E1" edges="A1B1 B1C1 C1D1 D1E1"/>
+  <route id="A2E2" edges="A2B2 B2C2 C2D2 D2E2"/>
+  <route id="A3E3" edges="A3B3 B3C3 C3D3 D3E3"/>
+  <route id="A4E4" edges="A4B4 B4C4 C4D4 D4E4"/>
+    
+ 
+  <flow id="flow_A0A4" type="bus" route="A0A4" begin="0" end="400" period="10"/>
+  <flow id="flow_B0B4" type="bus" route="B0B4" begin="0" end="400" period="10"/>
+  <flow id="flow_C0C4" type="bus" route="C0C4" begin="0" end="400" period="10"/>
+  <flow id="flow_D0D4" type="bus" route="D0D4" begin="0" end="400" period="10"/>
+  <flow id="flow_E0E4" type="bus" route="E0E4" begin="0" end="400" period="10"/>
+
+  <flow id="flow_A0E0" type="bus" route="A0E0" begin="0" end="400" period="10"/>
+  <flow id="flow_A1E1" type="bus" route="A1E1" begin="0" end="400" period="10"/>
+  <flow id="flow_A2E2" type="bus" route="A2E2" begin="0" end="400" period="10"/>
+  <flow id="flow_A3E3" type="bus" route="A3E3" begin="0" end="400" period="10"/>
+  <flow id="flow_A4E4" type="bus" route="A4E4" begin="0" end="400" period="10"/>
+
+
+  <route id="A4A0" edges="A4A3 A3A2 A2A1 A1A0"/>
+  <route id="B4B0" edges="B4B3 B3B2 B2B1 B1B0"/>
+  <route id="C4C0" edges="C4C3 C3C2 C2C1 C1C0"/>
+  <route id="D4D0" edges="D4D3 D3D2 D2D1 D1D0"/>
+  <route id="E4E0" edges="E4E3 E3E2 E2E1 E1E0"/>
+
+  <route id="E0A0" edges="E0D0 D0C0 C0B0 B0A0"/>
+  <route id="E1A1" edges="E1D1 D1C1 C1B1 B1A1"/>
+  <route id="E2A2" edges="E2D2 D2C2 C2B2 B2A2"/>
+  <route id="E3A3" edges="E3D3 D3C3 C3B3 B3A3"/>
+  <route id="E4A4" edges="E4D4 D4C4 C4B4 B4A4"/>
+  
+  <flow id="flow_A4A0" type="bus" route="A4A0" begin="0" end="400" period="10"/>
+  <flow id="flow_B4B0" type="bus" route="B4B0" begin="0" end="400" period="10"/>
+  <flow id="flow_C4C0" type="bus" route="C4C0" begin="0" end="400" period="10"/>
+  <flow id="flow_D4D0" type="bus" route="D4D0" begin="0" end="400" period="10"/>
+  <flow id="flow_E4E0" type="bus" route="E4E0" begin="0" end="400" period="10"/>
+
+  <flow id="flow_E0A0" type="bus" route="E0A0" begin="0" end="400" period="10"/>
+  <flow id="flow_E1A1" type="bus" route="E1A1" begin="0" end="400" period="10"/>
+  <flow id="flow_E2A2" type="bus" route="E2A2" begin="0" end="400" period="10"/>
+  <flow id="flow_E3A3" type="bus" route="E3A3" begin="0" end="400" period="10"/>
+  <flow id="flow_E4A4" type="bus" route="E4A4" begin="0" end="400" period="10"/>
+  
+
+
+  <vType id="car" accel="0.8" decel="4.5" sigma="1.0" length="4" minGap="2.5" maxSpeed="13.89" guiShape="passenger" />
+  <vType id="car2" accel="0.8" decel="4.5" sigma="1.0" length="4" minGap="2.5" maxSpeed="13.89" guiShape="passenger" />
+  <route id="A4E0" edges="A4B4 B4B3 B3C3 C3C2 C2D2 D2D1 D1E1 E1E0"/>
+  <flow id="flow_bus" type="car2" route="A4E0" begin="0" end="10" period="20"/>
+  <flow id="flow_car" type="car" route="A4E0" begin="0.01" end="10" period="20"/>
+  
+  
+  
+</routes>

@@ -1,0 +1,7 @@
+<launch>
+  <copy file="gridMap.net.xml"/>
+  <copy file="gridMap.rou.xml"/>
+  <copy file="gridMap.trips.xml"/>
+  <copy file="gridMap.sumocfg" type="config"/>
+  <copy file="gui-settings.xml"/>
+</launch>
