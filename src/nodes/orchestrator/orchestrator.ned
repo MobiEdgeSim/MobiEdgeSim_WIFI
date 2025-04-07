@@ -26,7 +26,7 @@ simple Orchestrator
         
         double updateInterval @unit(s) = default(1s);    // time slot to update the mechosts list
         
-        double wIFIDistance = default(100000);//the distance limitations of wifi signal
+        double wIFIDistance = default(1000);//the distance limitations of wifi signal
         
         string mecHostList = default("")@mutable;
         
@@ -42,7 +42,7 @@ simple Orchestrator
 //        int maxCpuRequest = 160;
         
         string requiredServices = default("service1");
-        string algorithmName = default("HHO");
+        string algorithmName = default("ABC");
         
         
         

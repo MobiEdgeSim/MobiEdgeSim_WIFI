@@ -79,6 +79,8 @@ public:
     double requestCpu;
     std::string algorithmName;
 
+
+
 };
 
 }
