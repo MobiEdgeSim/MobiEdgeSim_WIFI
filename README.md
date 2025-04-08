@@ -1,5 +1,4 @@
 # MobiEdgeSim WIFI
---- 
 
 ## Features
 - The author has developed a custom application based on INET's `UdpBasicApp` to measure round-trip time (RTT) between mobile clients and edge servers.
