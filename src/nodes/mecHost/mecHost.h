@@ -41,13 +41,13 @@ class MecHost : public cSimpleModule
 {
   protected:
     MecHostInfo currentInfo;
-    cMessage *updatePositionMsg = nullptr; // 用于定时更新位置的自消息
-    double updatePositionInterval; // 更新位置的时间间隔
+    cMessage *updatePositionMsg = nullptr;
+    double updatePositionInterval;
 
   protected:
     virtual void initialize() override;
     virtual void handleMessage(cMessage *msg) override;
-    void updatePosition(); // 更新当前位置的函数
+    void updatePosition();
 
     double maxRam;
     double maxDisk;

@@ -39,7 +39,8 @@ namespace MobiEdgeSim {
 
 Define_Module(Orchestrator);
 
-void Orchestrator::initialize(int stage) {
+void Orchestrator::initialize(int stage)
+{
     cSimpleModule::initialize(stage);
     // Avoid multiple initializations
     if (stage != inet::INITSTAGE_LOCAL)
@@ -65,20 +66,22 @@ void Orchestrator::initialize(int stage) {
 
 }
 
-void Orchestrator::handleMessage(cMessage *msg) {
+void Orchestrator::handleMessage(cMessage *msg)
+{
     if (strcmp(msg->getName(), "updateMecHost") == 0) {
         updateMecHost();
         scheduleAt(simTime() + updateInterval, updateMsg);
-    } else if (strcmp(msg->getName(), "servicePlacement") == 0) {
+    }
+    else if (strcmp(msg->getName(), "servicePlacement") == 0) {
         servicePlacement();
-        // 先取消之前调度的 spMsg（如果仍在队列中）
         if (spMsg->isScheduled())
             cancelEvent(spMsg);
         scheduleAt(simTime() + spInterval, spMsg);
     }
 }
 
-void Orchestrator::updateMecHost() {
+void Orchestrator::updateMecHost()
+{
     EV << "Orchestrator::updateMecHost " << endl;
     std::vector<cModule*> newMecHosts;
     // get the root module
@@ -95,18 +98,17 @@ void Orchestrator::updateMecHost() {
 
     //add
     for (auto newHost : newMecHosts) {
-        if (std::find(mecHosts.begin(), mecHosts.end(), newHost)
-                == mecHosts.end()) {
+        if (std::find(mecHosts.begin(), mecHosts.end(), newHost) == mecHosts.end()) {
             mecHosts.push_back(newHost);
             hasChanged = true;
         }
     } //delete
     for (auto it = mecHosts.begin(); it != mecHosts.end();) {
-        if (std::find(newMecHosts.begin(), newMecHosts.end(), *it)
-                == newMecHosts.end()) {
+        if (std::find(newMecHosts.begin(), newMecHosts.end(), *it) == newMecHosts.end()) {
             it = mecHosts.erase(it);
             hasChanged = true;
-        } else {
+        }
+        else {
             ++it;
         }
     }
@@ -120,7 +122,8 @@ void Orchestrator::updateMecHost() {
     EV << "\n";
 }
 
-void Orchestrator::updateMecHostListParam() {
+void Orchestrator::updateMecHostListParam()
+{
     std::string newMecHostList;
     for (auto host : mecHosts) {
         if (!newMecHostList.empty())
@@ -131,8 +134,8 @@ void Orchestrator::updateMecHostListParam() {
     EV << "Updated mecHostList parameter: " << newMecHostList << endl;
 }
 
-//过滤了wifi距离
-std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord) {
+std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
+{
     EV << "Orchestrator::getMechostNames -- scanning submodules\n";
 
     std::vector<std::string> hostList;
@@ -143,13 +146,11 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
     for (cModule::SubmoduleIterator it(systemModule); !it.end(); ++it) {
         cModule *mod = *it;
 
-        // 判断一下是否是 MecHost / MmecHost
         MecHost *mecHost = dynamic_cast<MecHost*>(mod);
         MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
         if (!mecHost && !mmecHost)
-            continue; // 不是我们要找的模块
+            continue;
 
-        // 能迭代到它，说明它还没被删除，dynamic_cast 也安全
         inet::Coord pos;
         if (mecHost) {
             pos.x = mecHost->getMecHostInfo().latitude;
@@ -160,7 +161,6 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
             pos.y = mmecHost->getMecHostInfo().longitude;
         }
 
-        // 距离计算
         double dx = pos.x - currentCoord.x;
         double dy = pos.y - currentCoord.y;
         double distance = std::sqrt(dx * dx + dy * dy);
@@ -173,7 +173,8 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
 }
 
 // construct UE  AppDescriptorInfo
-Orchestrator::AppDescriptorInfo Orchestrator::buildAppDescriptor(cModule *ue) {
+Orchestrator::AppDescriptorInfo Orchestrator::buildAppDescriptor(cModule *ue)
+{
     AppDescriptorInfo appInfo;
     appInfo.name = ue->getFullName();
 
@@ -181,10 +182,10 @@ Orchestrator::AppDescriptorInfo Orchestrator::buildAppDescriptor(cModule *ue) {
     inet::Coord uePos;
     cModule *mobilityModule = ue->getSubmodule("mobility");
     if (mobilityModule) {
-        veins::VeinsInetMobility *mob =
-                check_and_cast<veins::VeinsInetMobility*>(mobilityModule);
+        veins::VeinsInetMobility *mob = check_and_cast<veins::VeinsInetMobility*>(mobilityModule);
         uePos = mob->getCurrentPosition();
-    } else {
+    }
+    else {
         uePos.x = ue->par("latitude").doubleValue();
         uePos.y = ue->par("longitude").doubleValue();
         uePos.z = 0;
@@ -203,34 +204,28 @@ Orchestrator::AppDescriptorInfo Orchestrator::buildAppDescriptor(cModule *ue) {
     inet::L3Address ueAddr = resolver.resolve(ue->getFullName());
     appInfo.ueIpAddress = ueAddr.str();
 
-    EV << "Built AppDescriptor for UE " << ue->getFullName() << ": RAM="
-              << appInfo.ram << ", Disk=" << appInfo.disk << ", CPU="
-              << appInfo.cpu << ", Position=(" << appInfo.latitude << ", "
-              << appInfo.longitude << ")\n";
+    EV << "Built AppDescriptor for UE " << ue->getFullName() << ": RAM=" << appInfo.ram << ", Disk=" << appInfo.disk << ", CPU=" << appInfo.cpu
+            << ", Position=(" << appInfo.latitude << ", " << appInfo.longitude << ")\n";
 
     return appInfo;
 }
 
 // build MEC hosts informations
-std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos() {
+std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos()
+{
     std::vector<MecHostInfo> infos;
 
-    // 拿到根模块
     cModule *systemModule = getSimulation()->getSystemModule();
 
-    // 遍历当前还存活的所有子模块
     for (cModule::SubmoduleIterator it(systemModule); !it.end(); ++it) {
         cModule *mod = *it;
 
-        // 判断是不是 MecHost 或 MmecHost
         MecHost *mecHost = dynamic_cast<MecHost*>(mod);
         MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
 
-        // 如果都不是，就跳过
         if (!mecHost && !mmecHost)
             continue;
 
-        // 如果是，就取其 Info
         if (mecHost) {
             infos.push_back(mecHost->getMecHostInfo());
         }
@@ -241,44 +236,39 @@ std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos() {
     return infos;
 }
 
-cModule* Orchestrator::findBestMecHostForUE(cModule *ue) {
-    EV << "Orchestrator::findBestMecHostForUE invoked for UE "
-              << ue->getFullName() << "\n";
-    // 构造该 UE 的应用描述
+cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
+{
+    EV << "Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << "\n";
     AppDescriptorInfo appInfo = buildAppDescriptor(ue);
-    // 从当前的 MEC 主机列表中获取最新状态
+
     std::vector<MecHostInfo> hostInfos = buildMecHostInfos();
 
     //get the latency
-    MobiEdgeSim::UdpUeApp *udpApp = check_and_cast<MobiEdgeSim::UdpUeApp*>(
-            ue->getSubmodule("udpUeApp"));
+    MobiEdgeSim::UdpUeApp *udpApp = check_and_cast<MobiEdgeSim::UdpUeApp*>(ue->getSubmodule("udpUeApp"));
     if (udpApp) {
-        const std::map<std::string, omnetpp::simtime_t> &rttMap =
-                udpApp->getRttMap();
+        const std::map<std::string, omnetpp::simtime_t> &rttMap = udpApp->getRttMap();
         for (auto &hostInfo : hostInfos) {
             auto it = rttMap.find(hostInfo.name);
             if (it != rttMap.end()) {
                 EV << "Orchestrator get latency!!!!" << endl;
-                hostInfo.latency = it->second.dbl() * 1000; // 将 simtime_t 转为 double
-            } else {
-                // 如果没有找到对应的延迟，设置一个默认较高的延迟（例如 1e6）
+                hostInfo.latency = it->second.dbl() * 1000;
+            }
+            else {
                 hostInfo.latency = 1e6;
             }
         }
-    } else {
+    }
+    else {
         EV << "UdpUeApp module not found in UE " << ue->getFullName() << "\n";
     }
 
-    // 调用 MetaheuristicScheduler 进行调度
     MetaheuristicScheduler scheduler(appInfo, hostInfos, algorithmName);
     std::string bestHostName = scheduler.findBestHost();
     EV << "MetaheuristicScheduler selected best host: " << bestHostName << "\n";
 
-    // 在 mecHosts 列表中找到对应的 MEC 主机模块
     for (auto host : mecHosts) {
         if (host->getFullName() == bestHostName) {
-            // 更新该 MEC 主机的资源：假设资源需求由 requestRam, requestDisk, requestCpu 指定
-            // 注意：updateResources 需要在 MecHost 中实现，通常是减少可用资源
+
             MecHost *selectedHost = check_and_cast<MecHost*>(host);
             selectedHost->updateResources(requestRam, requestDisk, requestCpu);
             return host;
@@ -287,33 +277,32 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue) {
     return nullptr;
 }
 
-void Orchestrator::servicePlacement() {
+void Orchestrator::servicePlacement()
+{
     EV << "Orchestrator::servicePlacement invoked" << "\n";
     ues.clear();
     cModule *systemModule = getSimulation()->getSystemModule();
-    // 搜索所有名称中包含 "ue" 的模块作为 UE 列表
+
     for (cModule::SubmoduleIterator it(systemModule); !it.end(); ++it) {
         cModule *mod = *it;
         if (strstr(mod->getName(), "ue") != nullptr) {
             ues.push_back(mod);
         }
     }
-    // 对每个 UE 进行服务放置
     for (auto ue : ues) {
         cModule *bestHost = findBestMecHostForUE(ue);
         if (bestHost) {
-            EV << "Service Placement: For UE [" << ue->getFullName()
-                      << "], best MEC host selected is ["
-                      << bestHost->getFullName()
-                      << "] and its resources have been updated.\n";
-        } else {
-            EV << "Service Placement: For UE [" << ue->getFullName()
-                      << "], no suitable MEC host found.\n";
+            EV << "Service Placement: For UE [" << ue->getFullName() << "], best MEC host selected is [" << bestHost->getFullName()
+                    << "] and its resources have been updated.\n";
+        }
+        else {
+            EV << "Service Placement: For UE [" << ue->getFullName() << "], no suitable MEC host found.\n";
         }
     }
 }
 
-void Orchestrator::finish() {
+void Orchestrator::finish()
+{
     cancelAndDelete(updateMsg);
     cancelAndDelete(spMsg);
 }

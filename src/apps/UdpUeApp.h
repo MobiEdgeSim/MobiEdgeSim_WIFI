@@ -25,21 +25,20 @@ namespace MobiEdgeSim {
 
 class UdpUeApp: public inet::UdpBasicApp {
 protected:
-    // 用于保存每个收到回复的 RTT 延迟
     std::map<std::string, omnetpp::simtime_t> rttMap;
     inet::cMessage *updateDestMsg = nullptr;
-        // 定时更新间隔（单位 s），可以从参数中读取
+
     double updateDestInterval;
 
     virtual void initialize(int stage) override;
     virtual void handleMessage(inet::cMessage *msg) override;
-    // 重载处理数据包的方法
+
     virtual void processPacket(inet::Packet *packet) override;
 
     void updateDestAddresses();
     void sendPacket();
 public:
-    // 供外部查询延迟数据的接口
+
     const std::map<std::string, omnetpp::simtime_t>& getRttMap() const { return rttMap; }
     virtual void finish() override;
 };

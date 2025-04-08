@@ -43,7 +43,6 @@ Define_Module(UdpHostSink);
 ////    }
 //    //echoPacket->setName(("Echo-" + std::string(pk->getName())).c_str());
 //
-//    // 发回
 //    socket->sendTo(echoPacket, remoteAddress, srcPort);
 //    delete pk;
 //

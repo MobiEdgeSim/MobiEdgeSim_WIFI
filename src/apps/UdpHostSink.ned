@@ -5,9 +5,6 @@
 package mobiedgesim.apps;
 import inet.applications.udpapp.UdpEchoApp;
 
-//
-// TODO auto-generated module
-//
 module UdpHostSink extends UdpEchoApp
 {
     parameters:

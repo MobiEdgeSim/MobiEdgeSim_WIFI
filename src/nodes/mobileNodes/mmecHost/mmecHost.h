@@ -23,9 +23,7 @@
 namespace MobiEdgeSim {
 using namespace omnetpp;
 
-/**
- * TODO - Generated class
- */
+
 class MmecHost: public MecHost {
 
 protected:
