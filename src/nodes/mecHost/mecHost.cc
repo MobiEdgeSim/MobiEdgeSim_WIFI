@@ -44,7 +44,6 @@ void MecHost::initialize() {
               << currentInfo.availableCpu << "\n";
 
     updatePositionInterval = par("updatePositionInterval").doubleValue();
-    // 创建更新位置的自消息
     updatePositionMsg = new cMessage("updatePosition");
     scheduleAt(simTime() + updatePositionInterval, updatePositionMsg);
 
@@ -54,10 +53,8 @@ void MecHost::handleMessage(cMessage *msg) {
 
     if (msg == updatePositionMsg) {
         updatePosition();
-        // 重新安排下一个位置更新
         scheduleAt(simTime() + updatePositionInterval, updatePositionMsg);
     } else {
-        // 其他消息处理
         delete msg;
     }
 }

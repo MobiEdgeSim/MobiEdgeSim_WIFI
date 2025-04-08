@@ -3,9 +3,7 @@
 
 package mobiedgesim.apps;
 import inet.applications.udpapp.UdpBasicApp;
-//
-// TODO auto-generated module
-//
+
 module UdpUeApp extends UdpBasicApp
 {
     parameters:
