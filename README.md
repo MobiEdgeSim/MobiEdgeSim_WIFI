@@ -15,4 +15,13 @@ This project requires the following OMNeT++ frameworks:
 | [Veins](https://github.com/sommer/veins) | `v5.3.1` | Supports vehicular mobility using SUMO.|
 | [INET](https://github.com/inet-framework/inet) | `v4.5.4` | Offers WiFi (IEEE 802.11), TCP/IP stack, routing, and general network models.|
 
+## Quick Start
+
+
+```bash
+git clone https://github.com/Unipisa/Simu5G.git && \
+cd Simu5G && \
+git checkout v1.3.0
+
+
 
