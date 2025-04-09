@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package mobiedgesim.simulations.SimpleNet.GridMap;
+package mobiedgesim.simulations.SimpleNet.Two_Km_GridMap;
 
 import mobiedgesim.nodes.mobileNodes.mmecHost.MmecHost;
 import mobiedgesim.nodes.mobileNodes.ue.Ue;
