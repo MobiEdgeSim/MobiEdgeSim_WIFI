@@ -23,20 +23,13 @@ This project requires the following OMNeT++ frameworks:
 git clone https://github.com/Unipisa/Simu5G.git && \
 cd Simu5G && \
 git checkout v1.3.0
-. setenv -f
-make makefiles
-make MODE=release -j$(nproc) all
 ```
-  
 ### Veins Clone and Chekout
 
 ```bash
 git clone https://github.com/sommer/veins.git && \
 cd veins && \
 git checkout veins-5.3.1
-. setenv # set environment variables
-./configure # configure veins
-make -j$(nproc) # build veins
 ```
 
 ### Inet Clone and Chekout
@@ -44,8 +37,5 @@ make -j$(nproc) # build veins
 git clone https://github.com/inet-framework/inet.git && \
 cd inet && \
 git checkout v4.5.4
-. setenv # set the environment variables
-make makefiles # generate makefile
-make -j$(nproc) # build inet
 ```
 
