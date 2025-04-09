@@ -27,13 +27,16 @@
 #include "inet/networklayer/ipv4/Ipv4InterfaceData.h"
 #include "nodes/mecHost/mecHost.h"
 #include "nodes/mobileNodes/mmecHost/mmecHost.h"
-#include "scheduler/MetaheuristicScheduler.h"
+#include "scheduler/JVM/MetaheuristicScheduler.h"
 #include "apps/UdpUeApp.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
-// Emulation debug
-#include <iostream>
+#include "scheduler/SchedulerPolicy.h"
 
+#include <iostream>
 #include <random>
+#include <chrono>
+#include "scheduler/ResultLogger/ResultLogger.h"
+#include "scheduler/SchedulerInterface.h"
 
 namespace MobiEdgeSim {
 
@@ -262,9 +265,32 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
         EV << "UdpUeApp module not found in UE " << ue->getFullName() << "\n";
     }
 
-    MetaheuristicScheduler scheduler(appInfo, hostInfos, algorithmName);
-    std::string bestHostName = scheduler.findBestHost();
-    EV << "MetaheuristicScheduler selected best host: " << bestHostName << "\n";
+    auto start = std::chrono::steady_clock::now();
+
+    //C++ scheduler
+    std::unique_ptr<SchedulerInterface> scheduler = SchedulerPolicy::createScheduler(algorithmName);
+    std::string bestHostName = scheduler->findBestHost(appInfo, mecHostInfos);
+    EV << "Selected best host: " << bestHostName << "\n";
+
+//    //JVM
+//    MetaheuristicScheduler scheduler(appInfo, hostInfos, algorithmName);
+//    std::string bestHostName = scheduler.findBestHost();
+//    EV << "MetaheuristicScheduler selected best host: " << bestHostName << "\n";
+
+    auto end = std::chrono::steady_clock::now();
+    //microseconds -> milliseconds
+    double schedulingTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0;
+
+    EV << "Scheduling time: " << schedulingTimeMs << " ms\n";
+
+    ResultLogger::getInstance().logPlacementResult(
+        appInfo,
+        bestHostName,
+        mecHostInfos,
+        schedulingTimeMs,
+        algorithmName
+    );
+
 
     for (auto host : mecHosts) {
         if (host->getFullName() == bestHostName) {

@@ -49,8 +49,11 @@ OBJS = \
     $O/nodes/mobileNodes/mmecHost/mmecHost.o \
     $O/nodes/mobileNodes/ue/ue.o \
     $O/nodes/orchestrator/orchestrator.o \
-    $O/scheduler/JVMManager.o \
-    $O/scheduler/MetaheuristicScheduler.o \
+    $O/scheduler/SchedulerPolicy.o \
+    $O/scheduler/JVM/JVMManager.o \
+    $O/scheduler/JVM/MetaheuristicScheduler.o \
+    $O/scheduler/placementPolicy/ABC/ABC_Scheduler.o \
+    $O/scheduler/placementPolicy/Heuristics/ClosestFit_Scheduler.o \
     $O/apps/TimestampedPacket_m.o
 
 # Message files
