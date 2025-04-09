@@ -3,12 +3,11 @@
 #include <iostream>
 #include <chrono>
 #include <omnetpp.h>
-#include <sys/stat.h>  // 用于检测文件大小/存在
+#include <sys/stat.h>
 
 namespace MobiEdgeSim {
 
-// 静态成员初始化
-ResultLogger* ResultLogger::instance = nullptr;
+ResultLogger *ResultLogger::instance = nullptr;
 std::mutex ResultLogger::initMutex;
 
 ResultLogger& ResultLogger::getInstance() {
@@ -20,97 +19,81 @@ ResultLogger& ResultLogger::getInstance() {
 }
 
 ResultLogger::~ResultLogger() {
-    // 释放 map 中的文件流
-    for (auto& kv : fileMap) {
+    for (auto &kv : fileMap) {
         if (kv.second && kv.second->is_open()) {
             kv.second->close();
         }
     }
 }
 
-// 获取或创建某个算法的输出文件流
-std::ofstream& ResultLogger::getFileStream(const std::string& algorithmName) {
+std::ofstream& ResultLogger::getFileStream(const std::string &algorithmName) {
     auto it = fileMap.find(algorithmName);
     if (it != fileMap.end()) {
-        // 已经存在，直接返回
+
         return *(it->second);
     }
 
-    // 如果还没打开，则新建一个文件
-    // 命名：placement_results_<algorithmName>.csv
     std::string fileName = "placement_results_" + algorithmName + ".csv";
 
-    // 用 unique_ptr 管理，追加写
-    auto ofsPtr = std::make_unique<std::ofstream>(fileName, std::ios::out | std::ios::app);
+    auto ofsPtr = std::make_unique<std::ofstream>(fileName,
+            std::ios::out | std::ios::app);
     if (!ofsPtr->is_open()) {
         throw std::runtime_error("Failed to open " + fileName);
     }
 
-    // 检查文件是否是新创建（或空）
-    // 这里简单用 tellp() == 0 判断，也可以用 stat() 检查文件大小
     if (ofsPtr->tellp() == 0) {
-        // 写表头
-        // 你可以把 algorithmName 也放在表头，或者后续再加
-        (*ofsPtr) << "SimTime,Algorithm,AppName,BestHost,SchedulingTimeMs,BestLat,BestLon,AvailCpu,AvailRam,AvailDisk,AppCpu,AppRam,AppDisk,AppLat,AppLon\n";
+        (*ofsPtr)
+                << "SimTime,Algorithm,AppName,BestHost,SchedulingTimeMs,BestLat,BestLon,AvailCpu,AvailRam,AvailDisk,AppCpu,AppRam,AppDisk,AppLat,AppLon\n";
         ofsPtr->flush();
     }
 
-    // 把智能指针放进 map
     fileMap[algorithmName] = std::move(ofsPtr);
 
-    // 再次查找并返回引用
     return *(fileMap[algorithmName]);
 }
 
-void ResultLogger::logPlacementResult(
-    const std::string& algorithmName,
-    const Orchestrator::AppDescriptorInfo& appInfo,
-    const std::string& bestHostName,
-    const std::vector<MecHostInfo>& hosts,
-    double schedulingTimeMs
-) {
-    // 获取仿真当前时间
+void ResultLogger::logPlacementResult(const std::string &algorithmName,
+        const Orchestrator::AppDescriptorInfo &appInfo,
+        const std::string &bestHostName, const std::vector<MecHostInfo> &hosts,
+        double schedulingTimeMs) {
+
     omnetpp::simtime_t now = omnetpp::simTime();
 
-    // 找到 bestHost 的一些信息
     double bestLat = 0.0, bestLon = 0.0;
-    double availCpu = 0.0, availRam = 0.0, availDisk = 0.0;
+    double availCpu = 0.0, availRam = 0.0, availDisk = 0.0, latency = 0.0;
     for (auto &host : hosts) {
+        std::cout<<"host name:"<<host.name<<"host lat:"<<host.latitude<<"host lon:"<<host.longitude<<"host cpu:"<<host.availableCpu<<"host ram:"<<host.availableRam<<"host disk:"<<host.availableDisk<<"host latency:"<<host.latency<<std::endl;
         if (host.name == bestHostName) {
-            bestLat    = host.latitude;
-            bestLon    = host.longitude;
-            availCpu   = host.availableCpu;
-            availRam   = host.availableRam;
-            availDisk  = host.availableDisk;
+            bestLat = host.latitude;
+            bestLon = host.longitude;
+            availCpu = host.availableCpu;
+            availRam = host.availableRam;
+            availDisk = host.availableDisk;
+            latency = host.latency;
             break;
         }
     }
 
-    // 获取对应的文件流
-    std::ofstream& ofs = getFileStream(algorithmName);
+    std::ofstream &ofs = getFileStream(algorithmName);
 
-    // 写一行CSV
-    ofs << now                 << ","
-        << algorithmName       << ","
-        << appInfo.name        << ","
-        << bestHostName        << ","
-        << schedulingTimeMs    << ","
-        << bestLat             << ","
-        << bestLon             << ","
-        << availCpu            << ","
-        << availRam            << ","
-        << availDisk           << ","
-        << appInfo.cpu         << ","
-        << appInfo.ram         << ","
-        << appInfo.disk        << ","
-        << appInfo.latitude    << ","
-        << appInfo.longitude
-        << "\n";
+    //std::cout << "simTime: " << simTime().str() << std::endl;
+
+    std::cout <<"[Logger] " <<now << " algo: "<<algorithmName <<" ue name:"<< appInfo.name
+            << " best host:" <<bestHostName << " execution time:" << schedulingTimeMs << " best host lat:" << bestLat << " "
+            << "best host lon:"<< bestLon << " host avail_cpu:" << availCpu << " host avail_ram:" << availRam << " host avail_disk:" << availDisk<<" latency"<<latency
+            << " request_cpu:" << appInfo.cpu << " request_ram:" << appInfo.ram << " request_disk:" << appInfo.disk
+            << " ue lat:" << appInfo.latitude << " ue lon" << appInfo.longitude << std::endl;
+    std::cout <<"----------------------------------------------------------------------------------------------------------------------------------------------------------"<<std::endl;
+    ofs << now << "," << algorithmName << "," << appInfo.name << ","
+            << bestHostName << "," << schedulingTimeMs << "," << bestLat << ","
+            << bestLon << "," << availCpu << "," << availRam << "," << availDisk<<","<<latency
+            << "," << appInfo.cpu << "," << appInfo.ram << "," << appInfo.disk
+            << "," << appInfo.latitude << "," << appInfo.longitude << "\n";
 
     ofs.flush();
 }
 
-void ResultLogger::flush(const std::string& algorithmName) {
+void ResultLogger::flush(const std::string &algorithmName) {
     auto it = fileMap.find(algorithmName);
     if (it != fileMap.end() && it->second->is_open()) {
         it->second->flush();

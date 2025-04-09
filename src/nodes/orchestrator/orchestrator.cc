@@ -197,10 +197,10 @@ Orchestrator::AppDescriptorInfo Orchestrator::buildAppDescriptor(cModule *ue)
     appInfo.longitude = std::round(uePos.y * 1000.0) / 1000.0;
 
     //request resource
-    double occupancy = uniform(0.2, 0.8);
-    appInfo.ram = requestRam * (1 - occupancy);
-    appInfo.disk = requestDisk * (1 - occupancy);
-    appInfo.cpu = requestCpu * (1 - occupancy);
+    double randomRequesRate = uniform(0.2, 0.8);
+    appInfo.ram = requestRam * randomRequesRate;
+    appInfo.disk = requestDisk * randomRequesRate;
+    appInfo.cpu = requestCpu * randomRequesRate;
 
     // UE IP address
     inet::L3AddressResolver resolver;
@@ -269,7 +269,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
 
     //C++ scheduler
     std::unique_ptr<SchedulerInterface> scheduler = SchedulerPolicy::createScheduler(algorithmName);
-    std::string bestHostName = scheduler->findBestHost(appInfo, mecHostInfos);
+    std::string bestHostName = scheduler->findBestHost(appInfo, hostInfos);
     EV << "Selected best host: " << bestHostName << "\n";
 
 //    //JVM
@@ -284,11 +284,11 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     EV << "Scheduling time: " << schedulingTimeMs << " ms\n";
 
     ResultLogger::getInstance().logPlacementResult(
+        algorithmName,
         appInfo,
         bestHostName,
-        mecHostInfos,
-        schedulingTimeMs,
-        algorithmName
+        hostInfos,
+        schedulingTimeMs
     );
 
 

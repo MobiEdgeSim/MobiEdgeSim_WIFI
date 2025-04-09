@@ -36,7 +36,7 @@ protected:
     virtual void processPacket(inet::Packet *packet) override;
 
     void updateDestAddresses();
-    void sendPacket();
+    void sendPacket() override;
 public:
 
     const std::map<std::string, omnetpp::simtime_t>& getRttMap() const { return rttMap; }

@@ -39,7 +39,7 @@ public:
     };
 
 
-    std::vector<MecHostInfo> mecHostInfos;
+    //std::vector<MecHostInfo> mecHostInfos;
 
   protected:
 

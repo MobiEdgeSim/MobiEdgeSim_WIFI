@@ -33,20 +33,13 @@ simple Orchestrator
         
         double spInterval @unit(s)= default(1s);
         
-        //ue request service
-//        int minRamRequest = 2;
-//        int maxRamRequest = 16;
-//        int minDiskRequest = 20;
-//        int maxDiskRequest = 160;
-//        int minCpuRequest = 10;
-//        int maxCpuRequest = 160;
         
         string requiredServices = default("service1");
         string algorithmName = default("ABC");
         
         
-        
-    	double ramRequest @unit("B") = default(2GB);
-    	double diskRequest @unit("B") = default(100GB);
-    	double cpuRequest = default(3000);// CPU's clock speed in Million Instruction per Seconds (MIPS)
+        //request resources
+    	double ramRequest @unit("B") = default(0.2GB);
+    	double diskRequest @unit("B") = default(10GB);
+    	double cpuRequest = default(300);// CPU's clock speed in Million Instruction per Seconds (MIPS)
 }
