@@ -43,9 +43,9 @@ void MecHost::initialize() {
               << ", Disk: " << currentInfo.availableDisk << ", CPU: "
               << currentInfo.availableCpu << "\n";
 
-    updatePositionInterval = par("updatePositionInterval").doubleValue();
-    updatePositionMsg = new cMessage("updatePosition");
-    scheduleAt(simTime() + updatePositionInterval, updatePositionMsg);
+//    updatePositionInterval = par("updatePositionInterval").doubleValue();
+//    updatePositionMsg = new cMessage("updatePosition");
+//    scheduleAt(simTime() + updatePositionInterval, updatePositionMsg);
 
 }
 
@@ -60,11 +60,8 @@ void MecHost::handleMessage(cMessage *msg) {
 }
 
 void MecHost::updatePosition() {
-    // 如果存在 mobility 子模块，则更新位置，否则保持原值
     cModule *mobilityModule = getSubmodule("mobility");
     if (mobilityModule) {
-        // 如果你有两种不同的 mobility 模块（例如 StationaryMobilityBase 和 VeinsInetMobility），
-        // 可以根据模块类型进行判断：
         std::string nedType = mobilityModule->getNedTypeName();
         inet::Coord pos;
         if (nedType.find("VeinsInetMobility") != std::string::npos) {
@@ -74,7 +71,6 @@ void MecHost::updatePosition() {
             auto mobility = check_and_cast<inet::StationaryMobility*>(mobilityModule);
             pos = mobility->getCurrentPosition();
         } else {
-            // 默认使用基类接口
             auto mobility = check_and_cast<inet::StationaryMobilityBase*>(mobilityModule);
             pos = mobility->getCurrentPosition();
         }

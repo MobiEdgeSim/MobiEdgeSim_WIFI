@@ -31,6 +31,9 @@ module MmecHost extends SimpleNodeBase
         double maxRam @unit("B") = default(2GB);
         double maxDisk @unit("B") = default(100GB);
         double maxCpuSpeed = default(3000); 	 // CPU's clock speed in Million Instruction per Seconds (MIPS)
+        
+        double updatePositionInterval @unit(s) = default(0.5s);
+        string requiredServices = default("service1");
     submodules:
 	    udpHostSink : UdpHostSink{
 	         parameters:

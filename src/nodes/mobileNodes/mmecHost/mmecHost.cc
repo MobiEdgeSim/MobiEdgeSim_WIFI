@@ -50,6 +50,9 @@ void MmecHost::initialize() {
 
     EV << "Mobile mecHost " << getFullName() << ", RAM: " << currentInfo.availableRam<< ", Disk: " << currentInfo.availableDisk << ", CPU: "<< currentInfo.availableCpu << "\n";
 
+    updatePositionInterval = par("updatePositionInterval").doubleValue();
+    updatePositionMsg = new cMessage("updatePosition");
+    scheduleAt(simTime() + updatePositionInterval, updatePositionMsg);
 }
 
 
