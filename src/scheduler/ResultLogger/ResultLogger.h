@@ -21,6 +21,8 @@ private:
 
     std::unordered_map<std::string, std::unique_ptr<std::ofstream>> fileMap;
 
+    static int requestIndex;
+
 public:
     static ResultLogger& getInstance();
     ~ResultLogger();

@@ -4,16 +4,26 @@
 #include <chrono>
 #include <omnetpp.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 namespace MobiEdgeSim {
 
 ResultLogger *ResultLogger::instance = nullptr;
 std::mutex ResultLogger::initMutex;
+int ResultLogger::requestIndex = 0;
 
 ResultLogger& ResultLogger::getInstance() {
     std::lock_guard<std::mutex> lock(initMutex);
     if (!instance) {
         instance = new ResultLogger();
+
+#ifdef _WIN32
+        _mkdir("results");
+        _mkdir("results\\logs");
+#else
+        mkdir("results", 0777);
+        mkdir("results/logs", 0777);
+#endif
     }
     return *instance;
 }
@@ -43,7 +53,7 @@ std::ofstream& ResultLogger::getFileStream(const std::string &algorithmName) {
 
     if (ofsPtr->tellp() == 0) {
         (*ofsPtr)
-                << "SimTime,Algorithm,AppName,BestHost,SchedulingTimeMs,BestLat,BestLon,AvailCpu,AvailRam,AvailDisk,AppCpu,AppRam,AppDisk,AppLat,AppLon\n";
+                << "Index,SimTime,Algorithm,UeName,BestHost,SchedulingTimeMs,BestHost_Lat,BestHost_Lon,BestHost_AvailCpu,BestHost_AvailRam,BestHost_AvailDisk,Latency,Request_Cpu,Request_Ram,Request_Disk,Request_Lat,Request_Lon,distance\n";
         ofsPtr->flush();
     }
 
@@ -58,9 +68,12 @@ void ResultLogger::logPlacementResult(const std::string &algorithmName,
         double schedulingTimeMs) {
 
     omnetpp::simtime_t now = omnetpp::simTime();
+    ++requestIndex;
 
     double bestLat = 0.0, bestLon = 0.0;
     double availCpu = 0.0, availRam = 0.0, availDisk = 0.0, latency = 0.0;
+    double distance = 0.0;
+
     for (auto &host : hosts) {
         std::cout<<"host name:"<<host.name<<"host lat:"<<host.latitude<<"host lon:"<<host.longitude<<"host cpu:"<<host.availableCpu<<"host ram:"<<host.availableRam<<"host disk:"<<host.availableDisk<<"host latency:"<<host.latency<<std::endl;
         if (host.name == bestHostName) {
@@ -70,27 +83,67 @@ void ResultLogger::logPlacementResult(const std::string &algorithmName,
             availRam = host.availableRam;
             availDisk = host.availableDisk;
             latency = host.latency;
-            break;
+
+            distance = std::sqrt(std::pow(appInfo.latitude - host.latitude, 2) +
+                                         std::pow(appInfo.longitude - host.longitude, 2));
+            //break;// if break will stop cout the host info
         }
     }
 
     std::ofstream &ofs = getFileStream(algorithmName);
 
-    //std::cout << "simTime: " << simTime().str() << std::endl;
+    std::cout << "simTime: " << simTime().str() << std::endl;
 
     std::cout <<"[Logger] " <<now << " algo: "<<algorithmName <<" ue name:"<< appInfo.name
             << " best host:" <<bestHostName << " execution time:" << schedulingTimeMs << " best host lat:" << bestLat << " "
             << "best host lon:"<< bestLon << " host avail_cpu:" << availCpu << " host avail_ram:" << availRam << " host avail_disk:" << availDisk<<" latency"<<latency
             << " request_cpu:" << appInfo.cpu << " request_ram:" << appInfo.ram << " request_disk:" << appInfo.disk
-            << " ue lat:" << appInfo.latitude << " ue lon" << appInfo.longitude << std::endl;
+            << " ue lat:" << appInfo.latitude << " ue lon:" << appInfo.longitude<<" distance:" <<distance<< std::endl;
     std::cout <<"----------------------------------------------------------------------------------------------------------------------------------------------------------"<<std::endl;
-    ofs << now << "," << algorithmName << "," << appInfo.name << ","
+    ofs << requestIndex <<"," << now << "," << algorithmName << "," << appInfo.name << ","
             << bestHostName << "," << schedulingTimeMs << "," << bestLat << ","
             << bestLon << "," << availCpu << "," << availRam << "," << availDisk<<","<<latency
             << "," << appInfo.cpu << "," << appInfo.ram << "," << appInfo.disk
-            << "," << appInfo.latitude << "," << appInfo.longitude << "\n";
+            << "," << appInfo.latitude << "," << appInfo.longitude << ","  << distance<<"\n";
 
     ofs.flush();
+
+    std::string txtFilename = "results/logs/" + algorithmName + "_request_" + std::to_string(requestIndex) + ".txt";
+        std::ofstream txtofs(txtFilename);
+        if (txtofs.is_open()) {
+            txtofs << "Request Index: " << requestIndex << "\n"
+                   << "SimTime: " << now << "\n"
+                   << "Algorithm: " << algorithmName << "\n"
+                   << "UE Name: " << appInfo.name << "\n"
+                   << "UE Position: (" << appInfo.latitude << ", " << appInfo.longitude << ")\n"
+                   << "UE Request: CPU=" << appInfo.cpu
+                   << ", RAM=" << appInfo.ram
+                   << ", Disk=" << appInfo.disk << "\n"
+                   << "Best Host: " << bestHostName << "\n"
+                   << "Best Host Position: (" << bestLat << ", " << bestLon << ")\n"
+                   << "Best Host Avail CPU=" << availCpu
+                   << ", Avail RAM=" << availRam
+                   << ", Avail Disk=" << availDisk << "\n"
+                   << "Best Host Latency=" << latency << "\n"
+                   << "Distance (UE->BestHost)=" << distance << "\n\n";
+
+            txtofs << "------ All Candidate Hosts ------\n";
+            for (auto &host : hosts) {
+                txtofs << "* Host: " << host.name
+                       << "\n   Position: (" << host.latitude << ", " << host.longitude << ")"
+                       << "\n   Avail CPU=" << host.availableCpu
+                       << ", Avail RAM=" << host.availableRam
+                       << ", Avail Disk=" << host.availableDisk
+                       << "\n   Latency=" << host.latency
+                       << "\n--------------------------------\n";
+            }
+
+            txtofs.close();
+        }
+        else {
+            std::cerr << "[Logger] Failed to open " << txtFilename << " for writing." << std::endl;
+        }
+
 }
 
 void ResultLogger::flush(const std::string &algorithmName) {

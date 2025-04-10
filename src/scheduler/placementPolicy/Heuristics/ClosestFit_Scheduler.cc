@@ -17,16 +17,16 @@ static double calculateDistance(double lat1, double lon1, double lat2, double lo
 std::string ClosestFit_Scheduler::findBestHost(const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts)
 {
 
-    std::cout << "[ClosestFit_Scheduler] Handling request:" << "\n    AppName = " << appInfo.name << "\n    CPU     = " << appInfo.cpu
-            << "\n    RAM     = " << appInfo.ram << "\n    Disk    = " << appInfo.disk << "\n    Lat/Lon = (" << appInfo.latitude << ", "
-            << appInfo.longitude << ")\n" << std::endl;
-
-    std::cout << "[ClosestFit_Scheduler] Available hosts:" << std::endl;
-    for (const auto &host : hosts) {
-        std::cout << "  Host " << host.name << ": CPU=" << host.availableCpu << ", RAM=" << host.availableRam << ", Disk=" << host.availableDisk
-                << ", Lat/Lon=(" << host.latitude << ", " << host.longitude << ")" << std::endl;
-    }
-    std::cout << std::endl;
+//    std::cout << "[ClosestFit_Scheduler] Handling request:" << "\n    AppName = " << appInfo.name << "\n    CPU     = " << appInfo.cpu
+//            << "\n    RAM     = " << appInfo.ram << "\n    Disk    = " << appInfo.disk << "\n    Lat/Lon = (" << appInfo.latitude << ", "
+//            << appInfo.longitude << ")\n" << std::endl;
+//
+//    std::cout << "[ClosestFit_Scheduler] Available hosts:" << std::endl;
+//    for (const auto &host : hosts) {
+//        std::cout << "  Host " << host.name << ": CPU=" << host.availableCpu << ", RAM=" << host.availableRam << ", Disk=" << host.availableDisk
+//                << ", Lat/Lon=(" << host.latitude << ", " << host.longitude<< ", Latency=" << host.latency << ")" << std::endl;
+//    }
+//    std::cout << std::endl;
 
     double minDistance = std::numeric_limits<double>::max();
     std::string bestHost = "mecHost_null";
@@ -41,7 +41,7 @@ std::string ClosestFit_Scheduler::findBestHost(const Orchestrator::AppDescriptor
             bestHost = host.name;
         }
     }
-
+    std::cout <<"ClosestFit_Scheduler get the best host: "<<bestHost<< std::endl;
     return bestHost;
 }
 

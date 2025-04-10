@@ -13,6 +13,8 @@
 namespace MobiEdgeSim {
 
 std::unique_ptr<SchedulerInterface> SchedulerPolicy::createScheduler(const std::string& algorithmName) {
+    //std::cout<< "[SchedulerPolicy] createScheduler called at simTime = " << simTime() << std::endl;
+
     if (algorithmName == "ABC") {
         return std::make_unique<ABC_Scheduler>();
     }
