@@ -125,3 +125,5 @@ vim files
 
 # files for performance evaluation
 *.ipynb
+
+*.csv
