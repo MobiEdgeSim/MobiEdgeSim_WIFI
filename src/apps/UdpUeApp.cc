@@ -27,11 +27,12 @@ namespace MobiEdgeSim {
 Define_Module(UdpUeApp);
 void UdpUeApp::initialize(int stage)
 {
+    //std::cout<< "UdpUeApp::initialize!!!" << std::endl;
     inet::UdpBasicApp::initialize(stage);
     if (stage == inet::INITSTAGE_LOCAL) {
         updateDestInterval = par("updateDestInterval").doubleValue();
         updateDestMsg = new cMessage("updateDestAddresses");
-        scheduleAt(simTime() + 1 + updateDestInterval, updateDestMsg); //add 1s as start time
+        scheduleAt(simTime()+1, updateDestMsg);
     }
 }
 void UdpUeApp::handleMessage(cMessage *msg)
@@ -69,6 +70,7 @@ void UdpUeApp::updateDestAddresses()
     EV << "current latitude" << currentCoord.x << "longitude" << currentCoord.y << endl;
 
     std::vector<std::string> hostNames = orch->getMechostNames(currentCoord);
+    EV << "UdpUeApp::updateDestAddresses --There are  " << hostNames.size() << " mecHosts under the distance limitation." << endl;
 
     destAddresses.clear();
     for (const auto &hostName : hostNames) {
@@ -97,6 +99,7 @@ void UdpUeApp::updateDestAddresses()
 }
 void UdpUeApp::processPacket(inet::Packet *packet)
 {
+    //std::cout<< "UdpUeApp::processPacket received packet:" << packet->getName()<< std::endl;
     EV << "UdpUeApp::processPacket received packet: " << packet->getName() << endl;
     const auto &appPkt = packet->peekAtFront<TimestampedPacket>();
 

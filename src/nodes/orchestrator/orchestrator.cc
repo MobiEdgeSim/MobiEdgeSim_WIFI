@@ -56,8 +56,8 @@ void Orchestrator::initialize(int stage)
     // initial the update time interval
     updateMsg = new cMessage("updateMecHost");
     spMsg = new cMessage("servicePlacement");
-    scheduleAt(simTime() + 2 + updateInterval, updateMsg);
-    scheduleAt(simTime() + 2 + spInterval, spMsg);
+    scheduleAt(simTime() + 2, updateMsg);
+    scheduleAt(simTime() + 5, spMsg);
 
     requestRam = par("ramRequest").doubleValue();
     requestDisk = par("diskRequest").doubleValue();
@@ -129,7 +129,7 @@ void Orchestrator::updateMecHostListParam()
 {
     std::string newMecHostList;
     for (auto host : mecHosts) {
-        if (!newMecHostList.empty())
+        if (host != nullptr && !newMecHostList.empty())
             newMecHostList += ",";
         newMecHostList += host->getFullName();
     }
@@ -241,7 +241,9 @@ std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos()
 
 cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
 {
-    EV << "Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << "\n";
+    //EV << "Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << "\n";
+    EV << "======== [" << simTime() << "] Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << " ========" << endl;
+
     AppDescriptorInfo appInfo = buildAppDescriptor(ue);
 
     std::vector<MecHostInfo> hostInfos = buildMecHostInfos();
@@ -291,16 +293,24 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
         schedulingTimeMs
     );
 
-
-    for (auto host : mecHosts) {
-        if (host->getFullName() == bestHostName) {
-
-            MecHost *selectedHost = check_and_cast<MecHost*>(host);
-            selectedHost->updateResources(requestRam, requestDisk, requestCpu);
-            return host;
-        }
+    cModule *bestHost = getModuleByPath(bestHostName.c_str());
+    if (bestHost) {
+        MecHost *selectedHost = check_and_cast<MecHost*>(bestHost);
+        //selectedHost->updateResources(requestRam, requestDisk, requestCpu);
+        return selectedHost;
+    }else{
+        return nullptr;
     }
-    return nullptr;
+
+//    for (auto host : mecHosts) {//mechosts may contain null point due to the update interval gaps
+//        if (host != nullptr && host->getFullName() == bestHostName) {
+//
+//            MecHost *selectedHost = check_and_cast<MecHost*>(host);
+//            selectedHost->updateResources(requestRam, requestDisk, requestCpu);
+//            return host;
+//        }
+//    }
+//    return nullptr;
 }
 
 void Orchestrator::servicePlacement()
