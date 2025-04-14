@@ -256,7 +256,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
             auto it = rttMap.find(hostInfo.name);
             if (it != rttMap.end()) {
                 EV << "Orchestrator get latency!!!!" << endl;
-                hostInfo.latency = it->second.dbl() * 1000;
+                hostInfo.latency = it->second.dbl() * 1000/2; // RTT to latency;
             }
             else {
                 hostInfo.latency = 1e6;
@@ -296,7 +296,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     cModule *bestHost = getModuleByPath(bestHostName.c_str());
     if (bestHost) {
         MecHost *selectedHost = check_and_cast<MecHost*>(bestHost);
-        //selectedHost->updateResources(requestRam, requestDisk, requestCpu);
+        selectedHost->updateResources(requestRam, requestDisk, requestCpu);
         return selectedHost;
     }else{
         return nullptr;
