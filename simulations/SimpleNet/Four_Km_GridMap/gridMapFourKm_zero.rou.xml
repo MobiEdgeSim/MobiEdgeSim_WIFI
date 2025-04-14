@@ -1,0 +1,12 @@
+<routes>
+
+ 
+  <vType id="car" accel="0.8" decel="4.5" sigma="1.0" length="4" minGap="2.5" maxSpeed="13.89" guiShape="passenger" />
+  <route id="A4E0" edges="A4B4 B4B3 B3C3 C3C2 C2D2 D2D1 D1E1 E1E0"/>
+  
+ 
+  <flow id="flow_car" type="car" route="A4E0" begin="300" end="1200" period="20000"/>
+  
+  
+  
+</routes>

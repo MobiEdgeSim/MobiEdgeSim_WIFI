@@ -1,0 +1,6 @@
+<launch>
+  <copy file="gridMapFourKm.net.xml"/>
+  <copy file="gridMapFourKm_zero.rou.xml"/>
+  <copy file="gridMapFourKm_zero.sumocfg" type="config"/>
+  <copy file="gui-settings.xml"/>
+</launch>

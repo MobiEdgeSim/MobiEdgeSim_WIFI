@@ -1,0 +1,14 @@
+<configuration>
+  <input>
+    <net-file value="gridMapFourKm.net.xml"/>
+    <route-files value="gridMapFourKm_zero.rou.xml"/>
+  </input>
+  <time>
+    <begin value="0"/>
+    <end value="1200"/>
+    <step-length value="0.1"/>
+  </time>
+  <gui_only>
+    <gui-settings-file value="gui-settings.xml"/>
+   </gui_only>
+</configuration>
