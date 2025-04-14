@@ -60,6 +60,8 @@ class MecHost : public cSimpleModule
 
     double requestProcessTime;
 
+    double resource_used_pro;
+
   public:
       const MecHostInfo& getMecHostInfo() const;
       void updateResources(double allocatedRam, double allocatedDisk, double allocatedCPU);

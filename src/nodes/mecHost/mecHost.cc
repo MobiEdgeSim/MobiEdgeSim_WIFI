@@ -19,7 +19,8 @@ void MecHost::initialize()
     double maxDisk = par("maxDisk").doubleValue();
     double maxCpu = par("maxCpuSpeed").doubleValue();
 
-    double occupancy = uniform(0.2, 0.8);
+    resource_used_pro = par("resource_used_pro").doubleValue();
+    double occupancy = uniform(0.5, resource_used_pro);
     currentInfo.availableRam = maxRam * (1 - occupancy);
     currentInfo.availableDisk = maxDisk * (1 - occupancy);
     currentInfo.availableCpu = maxCpu * (1 - occupancy);
@@ -30,14 +31,28 @@ void MecHost::initialize()
 
     cModule *mobilityModule = getSubmodule("mobility");
     if (mobilityModule) {
-        auto mobility = check_and_cast<inet::StationaryMobilityBase*>(mobilityModule);
-        const inet::Coord &pos = mobility->getCurrentPosition();
+        std::string nedType = mobilityModule->getNedTypeName();
+        inet::Coord pos;
+        if (nedType.find("VeinsInetMobility") != std::string::npos) {
+            auto mobility = check_and_cast<veins::VeinsInetMobility*>(mobilityModule);
+            pos = mobility->getCurrentPosition();
+        }
+        else if (nedType.find("StationaryMobility") != std::string::npos) {
+            auto mobility = check_and_cast<inet::StationaryMobility*>(mobilityModule);
+            pos = mobility->getCurrentPosition();
+        }
+        else {
+            auto mobility = check_and_cast<inet::StationaryMobilityBase*>(mobilityModule);
+            pos = mobility->getCurrentPosition();
+        }
         currentInfo.latitude = pos.x;
         currentInfo.longitude = pos.y;
     }
     else {
-
+        // no mobility module
     }
+
+    // set default values
     currentInfo.latency = 1e6; //currently the latency information is meaningless
     EV << "MecHost " << getFullName() << ", RAM: " << currentInfo.availableRam << ", Disk: " << currentInfo.availableDisk << ", CPU: "
             << currentInfo.availableCpu << "\n";
@@ -114,10 +129,12 @@ void MecHost::updateResources(double allocatedRam, double allocatedDisk, double 
     EV << "MecHost " << getFullName() << " updated resources: availableRam=" << currentInfo.availableRam << ", availableDisk="
             << currentInfo.availableDisk << ", availableCpu=" << currentInfo.availableCpu << "\n";
 
+    //std::cout<<"requestProcessTime = "<<requestProcessTime<<std::endl;
     // schedule auto-release
     double half = requestProcessTime * 0.5;
     double range = requestProcessTime; // so total = [0.5T, 1.5T]
-    double actualTime = uniform(half, half + range);
+    //std::cout << "MecHost " << getFullName() << " scheduled auto-release in [" << half << ", " << half + range << "] seconds.\n";
+    double actualTime = uniform(half,  half + range);//TODO
 
     cMessage *releaseMsg = new cMessage("releaseTimer");
     // store the resource usage in msg parameters
@@ -125,6 +142,7 @@ void MecHost::updateResources(double allocatedRam, double allocatedDisk, double 
     releaseMsg->addPar("releaseDisk") = allocatedDisk;
     releaseMsg->addPar("releaseCpu") = allocatedCPU;
 
+    //std::cout << "MecHost " << getFullName() << " scheduled release timer in " << actualTime << " seconds.\n";
     take(releaseMsg);
     scheduleAt(simTime() + actualTime, releaseMsg);
 }

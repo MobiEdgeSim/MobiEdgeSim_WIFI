@@ -26,7 +26,7 @@
 #include "inet/networklayer/contract/IInterfaceTable.h"
 #include "inet/networklayer/ipv4/Ipv4InterfaceData.h"
 #include "nodes/mecHost/mecHost.h"
-#include "nodes/mobileNodes/mmecHost/mmecHost.h"
+//#include "nodes/mobileNodes/mmecHost/mmecHost.h"
 #include "scheduler/JVM/MetaheuristicScheduler.h"
 #include "apps/UdpUeApp.h"
 #include "inet/networklayer/common/L3AddressResolver.h"
@@ -74,12 +74,14 @@ void Orchestrator::handleMessage(cMessage *msg)
     if (strcmp(msg->getName(), "updateMecHost") == 0) {
         updateMecHost();
         scheduleAt(simTime() + updateInterval, updateMsg);
+        //std::cout << "Orchestrator::handleMessage -- (scheduleAt) updateMecHost" << std::endl;
     }
     else if (strcmp(msg->getName(), "servicePlacement") == 0) {
         servicePlacement();
         if (spMsg->isScheduled())
             cancelEvent(spMsg);
         scheduleAt(simTime() + spInterval, spMsg);
+        //std::cout << "Orchestrator::handleMessage -- (scheduleAt) servicePlacement" << std::endl;
     }
 }
 
@@ -150,8 +152,8 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
         cModule *mod = *it;
 
         MecHost *mecHost = dynamic_cast<MecHost*>(mod);
-        MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
-        if (!mecHost && !mmecHost)
+        //MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
+        if (!mecHost )
             continue;
 
         inet::Coord pos;
@@ -159,10 +161,10 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
             pos.x = mecHost->getMecHostInfo().latitude;
             pos.y = mecHost->getMecHostInfo().longitude;
         }
-        else {
-            pos.x = mmecHost->getMecHostInfo().latitude;
-            pos.y = mmecHost->getMecHostInfo().longitude;
-        }
+//        else {
+//            pos.x = mmecHost->getMecHostInfo().latitude;
+//            pos.y = mmecHost->getMecHostInfo().longitude;
+//        }
 
         double dx = pos.x - currentCoord.x;
         double dy = pos.y - currentCoord.y;
@@ -224,17 +226,17 @@ std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos()
         cModule *mod = *it;
 
         MecHost *mecHost = dynamic_cast<MecHost*>(mod);
-        MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
+       // MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
 
-        if (!mecHost && !mmecHost)
+        if (!mecHost )
             continue;
 
         if (mecHost) {
             infos.push_back(mecHost->getMecHostInfo());
         }
-        else { // mmecHost != nullptr
-            infos.push_back(mmecHost->getMecHostInfo());
-        }
+//        else { // mmecHost != nullptr
+//            infos.push_back(mmecHost->getMecHostInfo());
+//        }
     }
     return infos;
 }
@@ -243,7 +245,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
 {
     //EV << "Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << "\n";
     EV << "======== [" << simTime() << "] Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << " ========" << endl;
-
+    //std::cout << "======== [" << simTime() << "] Orchestrator::findBestMecHostForUE invoked for UE " << ue->getFullName() << " ========" << endl;
     AppDescriptorInfo appInfo = buildAppDescriptor(ue);
 
     std::vector<MecHostInfo> hostInfos = buildMecHostInfos();
@@ -256,7 +258,12 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
             auto it = rttMap.find(hostInfo.name);
             if (it != rttMap.end()) {
                 EV << "Orchestrator get latency!!!!" << endl;
-                hostInfo.latency = it->second.dbl() * 1000/2; // RTT to latency;
+                if (it->second.dbl() == 1e6) { //the host was reachable but the latency was not updated in 10s so it was set to 1e6
+                    hostInfo.latency = 1e6;
+                }else{
+                    hostInfo.latency = it->second.dbl() * 1000/2; // RTT to latency;
+                }
+
             }
             else {
                 hostInfo.latency = 1e6;
@@ -273,6 +280,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     std::unique_ptr<SchedulerInterface> scheduler = SchedulerPolicy::createScheduler(algorithmName);
     std::string bestHostName = scheduler->findBestHost(appInfo, hostInfos);
     EV << "Selected best host: " << bestHostName << "\n";
+    std::cout << "Selected best host: " << bestHostName << "\n";
 
 //    //JVM
 //    MetaheuristicScheduler scheduler(appInfo, hostInfos, algorithmName);
@@ -284,6 +292,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     double schedulingTimeMs = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / 1000.0;
 
     EV << "Scheduling time: " << schedulingTimeMs << " ms\n";
+    //std::cout << "Scheduling time: " << schedulingTimeMs << " ms\n";
 
     ResultLogger::getInstance().logPlacementResult(
         algorithmName,
@@ -301,6 +310,7 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     }else{
         return nullptr;
     }
+    //std::cout << "Orchestrator::updateResources" << "\n";
 
 //    for (auto host : mecHosts) {//mechosts may contain null point due to the update interval gaps
 //        if (host != nullptr && host->getFullName() == bestHostName) {
