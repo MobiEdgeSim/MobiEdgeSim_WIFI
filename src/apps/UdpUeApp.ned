@@ -11,8 +11,10 @@ module UdpUeApp extends UdpBasicApp
         
 
         double updateDestInterval @unit(s) = default(1s);
+        double rttTimeout @unit(s) = default(10s);
         
         double latitude = 0;
         double longitude = 0;
+        //sendInterval = 100000s;// this is to skip the autosending un udpBasicApp
      
 }

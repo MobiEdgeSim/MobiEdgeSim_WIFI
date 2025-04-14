@@ -42,6 +42,7 @@ class MecHost : public cSimpleModule
   protected:
     MecHostInfo currentInfo;
     cMessage *updatePositionMsg = nullptr;
+    //cMessage *releaseTimer = nullptr;
     double updatePositionInterval;
 
   protected:
@@ -57,9 +58,12 @@ class MecHost : public cSimpleModule
     double allocatedDisk;
     double allocatedCPU;
 
+    double requestProcessTime;
+
   public:
       const MecHostInfo& getMecHostInfo() const;
       void updateResources(double allocatedRam, double allocatedDisk, double allocatedCPU);
+      void releaseResources(double requestRam, double requestDisk, double requestCPU);
       void updateStatus(const MecHostInfo &newInfo);
 };
 

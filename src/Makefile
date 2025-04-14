@@ -54,6 +54,7 @@ OBJS = \
     $O/scheduler/JVM/MetaheuristicScheduler.o \
     $O/scheduler/ResultLogger/ResultLogger.o \
     $O/scheduler/placementPolicy/ABC/ABC_Scheduler.o \
+    $O/scheduler/placementPolicy/Heuristics/BestHost_Scheduler.o \
     $O/scheduler/placementPolicy/Heuristics/ClosestFit_Scheduler.o \
     $O/apps/TimestampedPacket_m.o
 

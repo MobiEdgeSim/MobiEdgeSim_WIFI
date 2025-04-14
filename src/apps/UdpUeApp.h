@@ -20,13 +20,19 @@
 #include "inet/applications/udpapp/UdpBasicApp.h"
 #include "inet/common/TimeTag_m.h"
 #include "inet/common/packet/Packet.h"
-
+#include <omnetpp.h>
+using namespace omnetpp;
 namespace MobiEdgeSim {
 
 class UdpUeApp: public inet::UdpBasicApp {
 protected:
+
     std::map<std::string, omnetpp::simtime_t> rttMap;
     inet::cMessage *updateDestMsg = nullptr;
+
+    double rttTimeout;//time to delete the old rtt
+    void scheduleRttReset(const std::string &hostName);
+    std::map<std::string, cMessage*> rttResetTimerMap;
 
     double updateDestInterval;
 
