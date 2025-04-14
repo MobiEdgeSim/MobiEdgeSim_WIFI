@@ -46,7 +46,6 @@ OBJS = \
     $O/apps/UdpHostSink.o \
     $O/apps/UdpUeApp.o \
     $O/nodes/mecHost/mecHost.o \
-    $O/nodes/mobileNodes/mmecHost/mmecHost.o \
     $O/nodes/mobileNodes/ue/ue.o \
     $O/nodes/orchestrator/orchestrator.o \
     $O/scheduler/SchedulerPolicy.o \
