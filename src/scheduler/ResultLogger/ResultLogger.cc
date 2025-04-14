@@ -85,8 +85,8 @@ void ResultLogger::logPlacementResult(const std::string &algorithmName, const Or
         else if (host.name.rfind("mecHost", 0) == 0) {
             totalMecHosts++;
         }
-//        std::cout << "host name:" << host.name << "host lat:" << host.latitude << "host lon:" << host.longitude << "host cpu:" << host.availableCpu
-//                << "host ram:" << host.availableRam << "host disk:" << host.availableDisk << "host latency:" << host.latency << std::endl;
+        std::cout << "host name:" << host.name << "host lat:" << host.latitude << "host lon:" << host.longitude << "host cpu:" << host.availableCpu
+                << "host ram:" << host.availableRam << "host disk:" << host.availableDisk << "host latency:" << host.latency << std::endl;
         if (host.name == bestHostName) {
             bestLat = host.latitude;
             bestLon = host.longitude;

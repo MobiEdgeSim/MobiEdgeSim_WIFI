@@ -46,6 +46,7 @@ void UdpUeApp::handleMessage(cMessage *msg)
     if (strcmp(msg->getName(), "updateDestAddresses") == 0) {
         updateDestAddresses();
         scheduleAt(simTime() + updateDestInterval, updateDestMsg);
+        //std::cout << "UdpUeApp::handleMessage -- (scheduleAt) updateDestAddresses"<<updateDestInterval << std::endl;
         return;
     }//reset the old rtt
     else if (strstr(msg->getName(), "resetRtt-") == msg->getName()) {
@@ -155,6 +156,7 @@ void UdpUeApp::scheduleRttReset(const std::string &hostName)
     rttResetTimerMap[hostName] = timerMsg;
 
     EV << "Scheduled RTT reset for host [" << hostName << "] at t=" << simTime() + rttTimeout << "\n";
+    //std::cout << "Scheduled RTT reset for host [" << hostName << "] at t=" << simTime() + rttTimeout << "\n";
     scheduleAt(simTime() + rttTimeout, timerMsg);
 }
 
