@@ -6,6 +6,8 @@
  */
 
 #include "SchedulerPolicy.h"
+
+#include "placementPolicy/Heuristics/BestHost_Scheduler.h"
 #include "scheduler/placementPolicy/ABC/ABC_Scheduler.h"
 #include "placementPolicy/Heuristics/ClosestFit_Scheduler.h"
 #include "scheduler/placementPolicy/Heuristics/ClosestFit_Scheduler.h"
@@ -21,9 +23,9 @@ std::unique_ptr<SchedulerInterface> SchedulerPolicy::createScheduler(const std::
     // else if (algorithmName == "HHO") {
     //     return std::make_unique<HHO_Scheduler>();
     // }
-    // else if (algorithmName == "GA") {
-    //     return std::make_unique<GA_Scheduler>();
-    // }
+     else if (algorithmName == "BestHost") {
+         return std::make_unique<BestHost_Scheduler>();
+     }
     else if (algorithmName == "ClosestFit") {
         return std::make_unique<ClosestFit_Scheduler>();
     }
