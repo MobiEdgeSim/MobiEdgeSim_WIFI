@@ -41,6 +41,16 @@ Configs=(
     "zero_static_total_mobile"
     "fifty_static_total_mobile"
     "hundred_static_total_mobile"
+    
+    "fifty_static_zero_mobile_low_resource"
+    "hundred_static_zero_mobile_low_resource"
+    "zero_static_half_mobile_low_resource"
+    "fifty_static_half_mobile_low_resource"
+    "hundred_static_half_mobile_low_resource"
+    "zero_static_total_mobile_low_resource"
+    "fifty_static_total_mobile_low_resource"
+    "hundred_static_total_mobile_low_resource"
+    
 )
 
 # 输出一个简单的 XML 日志文件名称
@@ -62,7 +72,6 @@ echo '<Simulations>' >> "$XML_LOG"
 for cfg in "${Configs[@]}"; do
     echo "===================================================================="
     echo "Running simulation with configuration: $cfg"
-    echo "===================================================================="
 
     # 记录开始时间
     start_time=$(date +"%Y-%m-%d %H:%M:%S")
