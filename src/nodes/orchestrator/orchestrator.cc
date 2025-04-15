@@ -94,7 +94,7 @@ void Orchestrator::updateMecHost()
 
     for (cModule::SubmoduleIterator it(systemModule); !it.end(); ++it) {
         cModule *mod = *it;
-        if (strstr(mod->getName(), "mecHost") != nullptr) {
+        if (dynamic_cast<MecHost*>(mod) != nullptr) {
             newMecHosts.push_back(mod);
         }
     }
@@ -153,7 +153,7 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
 
         MecHost *mecHost = dynamic_cast<MecHost*>(mod);
         //MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
-        if (!mecHost )
+        if (!mecHost)
             continue;
 
         inet::Coord pos;
@@ -226,9 +226,9 @@ std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos()
         cModule *mod = *it;
 
         MecHost *mecHost = dynamic_cast<MecHost*>(mod);
-       // MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
+        // MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
 
-        if (!mecHost )
+        if (!mecHost)
             continue;
 
         if (mecHost) {
@@ -260,8 +260,9 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
                 EV << "Orchestrator get latency!!!!" << endl;
                 if (it->second.dbl() == 1e6) { //the host was reachable but the latency was not updated in 10s so it was set to 1e6
                     hostInfo.latency = 1e6;
-                }else{
-                    hostInfo.latency = it->second.dbl() * 1000/2; // RTT to latency;
+                }
+                else {
+                    hostInfo.latency = it->second.dbl() * 1000 / 2; // RTT to latency;
                 }
 
             }
@@ -294,33 +295,44 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     EV << "Scheduling time: " << schedulingTimeMs << " ms\n";
     //std::cout << "Scheduling time: " << schedulingTimeMs << " ms\n";
 
-    ResultLogger::getInstance().logPlacementResult(
-        algorithmName,
-        appInfo,
-        bestHostName,
-        hostInfos,
-        schedulingTimeMs
-    );
+    ResultLogger::getInstance().logPlacementResult(algorithmName, appInfo, bestHostName, hostInfos, schedulingTimeMs);
 
-    cModule *bestHost = getModuleByPath(bestHostName.c_str());
-    if (bestHost) {
-        MecHost *selectedHost = check_and_cast<MecHost*>(bestHost);
-        selectedHost->updateResources(requestRam, requestDisk, requestCpu);
-        return selectedHost;
-    }else{
-        return nullptr;
-    }
+//    cModule *bestHost = getModuleByPath(bestHostName.c_str());
+//    if (bestHost) {
+//        MecHost *selectedHost = check_and_cast<MecHost*>(bestHost);
+//        selectedHost->updateResources(requestRam, requestDisk, requestCpu);
+//        return selectedHost;
+//    }else{
+//        return nullptr;
+//    }
     //std::cout << "Orchestrator::updateResources" << "\n";
 
-//    for (auto host : mecHosts) {//mechosts may contain null point due to the update interval gaps
+//    for (auto host : mecHosts) {    //mechosts may contain null point due to the update interval gaps
 //        if (host != nullptr && host->getFullName() == bestHostName) {
-//
 //            MecHost *selectedHost = check_and_cast<MecHost*>(host);
 //            selectedHost->updateResources(requestRam, requestDisk, requestCpu);
 //            return host;
 //        }
 //    }
 //    return nullptr;
+
+    if (bestHostName == "mecHost_null") {
+        EV << "Scheduler indicates no suitable MEC host (mecHost_null). Return nullptr.\n";
+        return nullptr;
+    }
+    cModule *bestHostMod = getSimulation()->getModuleByPath(bestHostName.c_str());
+    if (!bestHostMod) {
+        EV << "Could not find module: " << bestHostName << ", returning nullptr.\n";
+        return nullptr;
+    }
+    auto selectedHost = dynamic_cast<MecHost*>(bestHostMod);
+    if (!selectedHost) {
+        EV << "Module " << bestHostName << " is not a MecHost! returning nullptr.\n";
+        return nullptr;
+    }
+
+    selectedHost->updateResources(requestRam, requestDisk, requestCpu);
+    return bestHostMod;
 }
 
 void Orchestrator::servicePlacement()

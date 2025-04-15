@@ -85,8 +85,8 @@ void ResultLogger::logPlacementResult(const std::string &algorithmName, const Or
         else if (host.name.rfind("mecHost", 0) == 0) {
             totalMecHosts++;
         }
-        std::cout << "host name:" << host.name << "host lat:" << host.latitude << "host lon:" << host.longitude << "host cpu:" << host.availableCpu
-                << "host ram:" << host.availableRam << "host disk:" << host.availableDisk << "host latency:" << host.latency << std::endl;
+//        std::cout << "host name:" << host.name << "host lat:" << host.latitude << "host lon:" << host.longitude << "host cpu:" << host.availableCpu
+//                << "host ram:" << host.availableRam << "host disk:" << host.availableDisk << "host latency:" << host.latency << std::endl;
         if (host.name == bestHostName) {
             bestLat = host.latitude;
             bestLon = host.longitude;
@@ -102,7 +102,7 @@ void ResultLogger::logPlacementResult(const std::string &algorithmName, const Or
 
     std::ofstream &ofs = getFileStream(algorithmName);
 
-    std::cout << "simTime: " << simTime().str() << std::endl;
+    //std::cout << "simTime: " << simTime().str() << std::endl;
 
     std::cout << "[Logger] " << now << " algo: " << algorithmName << " ue name:" << appInfo.name << " best host:" << bestHostName
             << " execution time:" << schedulingTimeMsint << " best host lat:" << bestLat << " " << "best host lon:" << bestLon << " host avail_cpu:"
