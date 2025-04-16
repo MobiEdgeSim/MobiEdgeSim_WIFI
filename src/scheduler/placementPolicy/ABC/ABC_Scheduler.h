@@ -42,7 +42,7 @@ class ABC_Scheduler : public SchedulerInterface
 public:
     std::string findBestHost(const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts) override;
 
-    ABC_Scheduler(int popSize = 100, int iterations = 200, int limit = 30, int tryTimeSet = 30) :
+    ABC_Scheduler(int popSize = 20, int iterations = 50, int limit = 20, int tryTimeSet = 10) :
             populationSize(popSize), maxIterations(iterations), limitTrial(limit), tryTime(tryTimeSet)
     {
         rng.seed(std::random_device { }());
@@ -64,7 +64,7 @@ private:
 
     void calculateFitnessAll(const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts);
 
-    double computeSingleBeeFitness(int hostIndex, const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts) const;
+    double computeSingleBeeFitness(int hostIndex, const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts);
 
     void sendEmployedBees(const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts);
 

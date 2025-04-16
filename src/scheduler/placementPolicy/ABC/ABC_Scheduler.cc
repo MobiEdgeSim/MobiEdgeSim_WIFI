@@ -124,8 +124,7 @@ void ABC_Scheduler::calculateFitnessAll(const Orchestrator::AppDescriptorInfo &a
     }
 }
 
-double ABC_Scheduler::computeSingleBeeFitness(int hostIndex, const Orchestrator::AppDescriptorInfo &appInfo,
-        const std::vector<MecHostInfo> &hosts) const
+double ABC_Scheduler::computeSingleBeeFitness(int hostIndex, const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts)
 {
     if (hostIndex < 0 || hostIndex >= (int) hosts.size()) {
         return -1e9;
@@ -292,7 +291,6 @@ void ABC_Scheduler::normalizeAll(std::vector<HostMetrics> &metricsVec)
     double minDist = 1e9, maxDist = 0.0;
     double minRes = 1e9, maxRes = -1e9;
 
-    // 1) 找到 min/max
     for (auto &hm : metricsVec) {
         if (!hm.feasible)
             continue;
@@ -314,25 +312,19 @@ void ABC_Scheduler::normalizeAll(std::vector<HostMetrics> &metricsVec)
     double distRange = std::max(1e-9, maxDist - minDist);
     double resRange = std::max(1e-9, maxRes - minRes);
 
-    // 2) 归一化
     for (auto &hm : metricsVec) {
         if (!hm.feasible) {
-            // 不可行 => 给 0
             hm.latency = 0.0;
             hm.distance = 0.0;
             hm.resourceRate = 0.0;
             continue;
         }
-
-        // latency 越小越好 => 1.0 - scale
         double latNorm = (hm.latency - minLat) / latRange;
         latNorm = 1.0 - latNorm;
 
-        // distance 越小越好 => 1.0 - scale
         double distNorm = (hm.distance - minDist) / distRange;
         distNorm = 1.0 - distNorm;
 
-        // resourceRate 越大越好 => 直接 scale
         double resNorm = (hm.resourceRate - minRes) / resRange;
 
         hm.latency = latNorm;

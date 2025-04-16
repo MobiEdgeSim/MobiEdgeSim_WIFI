@@ -15,8 +15,12 @@
 
 #ifndef SCHEDULER_PLACEMENTPOLICY_HEURISTICS_BESTHOST_SCHEDULER_H_
 #define SCHEDULER_PLACEMENTPOLICY_HEURISTICS_BESTHOST_SCHEDULER_H_
-
 #include "scheduler/SchedulerInterface.h"
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cmath>
+
 
 namespace MobiEdgeSim {
 
@@ -26,10 +30,16 @@ public:
     std::string findBestHost(const Orchestrator::AppDescriptorInfo &appInfo, const std::vector<MecHostInfo> &hosts) override;
 
 protected:
-    double computeFitness(const MecHostInfo &host, const Orchestrator::AppDescriptorInfo &appInfo)const;
+    double computeFitness(const MecHostInfo &host, const Orchestrator::AppDescriptorInfo &appInfo,
+                          double maxLatency, double minLatency,
+                          double maxDistance, double minDistance,
+                          double maxCpu, double minCpu,
+                          double maxRam, double minRam,
+                          double maxDisk, double minDisk) const;
     bool canAllocate(const MecHostInfo &host, const Orchestrator::AppDescriptorInfo &appInfo) const;
     double calcDistance(double lat1, double lon1, double lat2, double lon2) const;
 };
 
+
 } /* namespace MobiEdgeSim */
-#endif /* SCHEDULER_PLACEMENTPOLICY_HEURISTICS_BESTHOST_SCHEDULER_H_ */
+#endif
