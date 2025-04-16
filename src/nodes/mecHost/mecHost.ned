@@ -52,7 +52,9 @@ module MecHost extends SimpleNodeBase
         string requiredServices = default("service1");
         
         double requestProcessTime @unit(s) = default(1s);
-        double resource_used_pro = default(0.8);
+        
+        double resource_used_pro_up = default(0.8);
+        double resource_used_pro_low = default(0.6);
 	submodules:
 	    udpHostSink : UdpHostSink{
 	         parameters:

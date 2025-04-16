@@ -19,8 +19,10 @@ void MecHost::initialize()
     double maxDisk = par("maxDisk").doubleValue();
     double maxCpu = par("maxCpuSpeed").doubleValue();
 
-    resource_used_pro = par("resource_used_pro").doubleValue();
-    double occupancy = uniform(0.5, resource_used_pro);
+    resource_used_pro_up = par("resource_used_pro_up").doubleValue();
+    resource_used_pro_low = par("resource_used_pro_low").doubleValue();
+    double occupancy = uniform(resource_used_pro_low, resource_used_pro_up);
+    //double occupancy = 0;
     currentInfo.availableRam = maxRam * (1 - occupancy);
     currentInfo.availableDisk = maxDisk * (1 - occupancy);
     currentInfo.availableCpu = maxCpu * (1 - occupancy);

@@ -60,7 +60,8 @@ class MecHost : public cSimpleModule
 
     double requestProcessTime;
 
-    double resource_used_pro;
+    double resource_used_pro_up;
+    double resource_used_pro_low;
 
   public:
       const MecHostInfo& getMecHostInfo() const;
