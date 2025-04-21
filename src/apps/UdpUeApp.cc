@@ -38,7 +38,7 @@ void UdpUeApp::initialize(int stage)
         updateDestMsg = new cMessage("updateDestAddresses");
         scheduleAt(simTime() + 1, updateDestMsg);
 
-        rttTimeout = par("rttTimeout");
+        //rttTimeout = par("rttTimeout");
     }
 }
 void UdpUeApp::handleMessage(cMessage *msg)
@@ -49,22 +49,22 @@ void UdpUeApp::handleMessage(cMessage *msg)
         //std::cout << "UdpUeApp::handleMessage -- (scheduleAt) updateDestAddresses"<<updateDestInterval << std::endl;
         return;
     }//reset the old rtt
-    else if (strstr(msg->getName(), "resetRtt-") == msg->getName()) {
-
-        std::string hostName = msg->par("hostName").stringValue();
-
-        rttMap[hostName] = 1e6;
-        EV << "UdpUeApp::handleMessage => set rttMap[" << hostName << "] to 1e6.\n";
-
-        auto it = rttResetTimerMap.find(hostName);
-        if (it != rttResetTimerMap.end()) {
-            if (it->second == msg) {
-                rttResetTimerMap.erase(it);
-            }
-        }
-        delete msg;
-        return;
-    }
+//    else if (strstr(msg->getName(), "resetRtt-") == msg->getName()) {
+//
+//        std::string hostName = msg->par("hostName").stringValue();
+//
+//        rttMap[hostName] = 1e6;
+//        EV << "UdpUeApp::handleMessage => set rttMap[" << hostName << "] to 1e6.\n";
+//
+//        auto it = rttResetTimerMap.find(hostName);
+//        if (it != rttResetTimerMap.end()) {
+//            if (it->second == msg) {
+//                rttResetTimerMap.erase(it);
+//            }
+//        }
+//        delete msg;
+//        return;
+//    }
     inet::UdpBasicApp::handleMessage(msg);
 }
 void UdpUeApp::updateDestAddresses()
@@ -91,7 +91,6 @@ void UdpUeApp::updateDestAddresses()
     EV << "current latitude" << currentCoord.x << "longitude" << currentCoord.y << endl;
 
     std::vector<std::string> hostNames = orch->getMechostNames(currentCoord);
-    EV << "UdpUeApp::updateDestAddresses --There are  " << hostNames.size() << " mecHosts under the distance limitation." << endl;
 
     destAddresses.clear();
     for (const auto &hostName : hostNames) {
@@ -132,45 +131,52 @@ void UdpUeApp::processPacket(inet::Packet *packet)
         auto addr = srcAddrTag->getSrcAddress();
         auto *host = inet::L3AddressResolver().findHostWithAddress(addr);
         std::string hostName = host ? host->getFullName() : addr.str();
-        rttMap[hostName] = delay;
-        EV << "Saved RTT to rttMap[" << hostName << "] = " << delay << "s" << endl;
-        scheduleRttReset(hostName);
+
+        RttEntry &e = rttMap[hostName];
+        e.rtt        = delay;
+        e.lastUpdate = simTime();         // <‑‑ NEW
+        EV << "Saved RTT = " << delay << "s at t=" << e.lastUpdate << endl;
+//
+//
+//        rttMap[hostName] = delay;
+//        EV << "Saved RTT to rttMap[" << hostName << "] = " << delay << "s" << endl;
+        //scheduleRttReset(hostName);
     }
 
     UdpBasicApp::processPacket(packet);
 }
 
-void UdpUeApp::scheduleRttReset(const std::string &hostName)
-{
-    auto it = rttResetTimerMap.find(hostName);
-    if (it != rttResetTimerMap.end()) {
-        cMessage *oldTimer = it->second;
-        if (oldTimer->isScheduled())
-            cancelEvent(oldTimer);
-        delete oldTimer;
-        rttResetTimerMap.erase(it);
-    }
-    cMessage *timerMsg = new cMessage(("resetRtt-" + hostName).c_str());
-    timerMsg->addPar("hostName") = hostName.c_str();
-
-    rttResetTimerMap[hostName] = timerMsg;
-
-    EV << "Scheduled RTT reset for host [" << hostName << "] at t=" << simTime() + rttTimeout << "\n";
-    //std::cout << "Scheduled RTT reset for host [" << hostName << "] at t=" << simTime() + rttTimeout << "\n";
-    scheduleAt(simTime() + rttTimeout, timerMsg);
-}
+//void UdpUeApp::scheduleRttReset(const std::string &hostName)
+//{
+//    auto it = rttResetTimerMap.find(hostName);
+//    if (it != rttResetTimerMap.end()) {
+//        cMessage *oldTimer = it->second;
+//        if (oldTimer->isScheduled())
+//            cancelEvent(oldTimer);
+//        delete oldTimer;
+//        rttResetTimerMap.erase(it);
+//    }
+//    //cMessage *timerMsg = new cMessage(("resetRtt-" + hostName).c_str());
+//    timerMsg->addPar("hostName") = hostName.c_str();
+//
+//    rttResetTimerMap[hostName] = timerMsg;
+//
+//    EV << "Scheduled RTT reset for host [" << hostName << "] at t=" << simTime() + rttTimeout << "\n";
+//    //std::cout << "Scheduled RTT reset for host [" << hostName << "] at t=" << simTime() + rttTimeout << "\n";
+//    scheduleAt(simTime() + rttTimeout, timerMsg);
+//}
 
 void UdpUeApp::finish()
 {
     cancelAndDelete(updateDestMsg);
 
-    for (auto &kv : rttResetTimerMap) {
-        cMessage *timer = kv.second;
-        if (timer->isScheduled())
-            cancelEvent(timer);
-        delete timer;
-    }
-    rttResetTimerMap.clear();
+//    for (auto &kv : rttResetTimerMap) {
+//        cMessage *timer = kv.second;
+//        if (timer->isScheduled())
+//            cancelEvent(timer);
+//        delete timer;
+//    }
+//    rttResetTimerMap.clear();
 
     inet::UdpBasicApp::finish();
 }

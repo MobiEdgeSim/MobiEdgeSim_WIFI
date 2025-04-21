@@ -43,6 +43,8 @@ public:
 
   protected:
 
+    double rttFreshLimit;
+
     inet::cMessage *updateMsg = nullptr;
     inet::simtime_t updateInterval;//Update period (unit: seconds)
     std::vector<cModule*> mecHosts;

@@ -91,9 +91,9 @@ double BestHost_Scheduler::computeFitness(const MecHostInfo &host, const Orchest
     double distance = calcDistance(host.latitude, host.longitude, appInfo.latitude, appInfo.longitude);
     double distanceNorm = (maxDistance - distance) / (maxDistance - minDistance + 1e-6);
 
-    double wLatency = 0.6;
-    double wResource = 0.2;
-    double wDistance = 0.2;
+    double wLatency = 0.8;
+    double wResource = 0.1;
+    double wDistance = 0.1;
 
     return wLatency * latencyNorm + wResource * resourceRate + wDistance * distanceNorm;
 }
