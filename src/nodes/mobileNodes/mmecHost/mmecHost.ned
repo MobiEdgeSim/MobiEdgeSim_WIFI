@@ -30,7 +30,7 @@ module MmecHost extends MecHost
         //@class(MobiEdgeSim::MmecHost);
         mobility.typename = default("VeinsInetMobility");
         updatePositionInterval = 1s;
-        maxRam  = default(0.5GB);
+        maxRam  = default(1GB);
         maxDisk = default(50GB);
         maxCpuSpeed = default(1500); 
         requestProcessTime = 1s;

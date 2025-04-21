@@ -10,7 +10,7 @@ module UdpUeApp extends UdpBasicApp
         @class("MobiEdgeSim::UdpUeApp");
         
 
-        double updateDestInterval @unit(s) = default(1s);
+        double updateDestInterval @unit(s) = default(3s);
         double rttTimeout @unit(s) = default(10s);
         
         double latitude = 0;
