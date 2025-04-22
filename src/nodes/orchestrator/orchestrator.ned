@@ -42,4 +42,6 @@ simple Orchestrator
     	double ramRequest @unit("B") = default(0.2GB);
     	double diskRequest @unit("B") = default(10GB);
     	double cpuRequest = default(300);// CPU's clock speed in Million Instruction per Seconds (MIPS)
+    	
+    	double rttFreshLimit @unit(s) = default(2s);
 }

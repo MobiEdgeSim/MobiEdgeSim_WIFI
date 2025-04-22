@@ -5,8 +5,8 @@
   </input>
   <time>
     <begin value="0"/>
-    <end value="1200"/>
-    <step-length value="0.1"/>
+    <end value="2000"/>
+    <step-length value="1"/>
   </time>
   <gui_only>
     <gui-settings-file value="gui-settings.xml"/>

@@ -24,15 +24,21 @@
 using namespace omnetpp;
 namespace MobiEdgeSim {
 
+struct RttEntry {
+    omnetpp::simtime_t rtt;
+    omnetpp::simtime_t lastUpdate;
+};
+
 class UdpUeApp: public inet::UdpBasicApp {
 protected:
 
-    std::map<std::string, omnetpp::simtime_t> rttMap;
+    //std::map<std::string, omnetpp::simtime_t> rttMap;
+    std::map<std::string, RttEntry> rttMap;
     inet::cMessage *updateDestMsg = nullptr;
 
-    double rttTimeout;//time to delete the old rtt
-    void scheduleRttReset(const std::string &hostName);
-    std::map<std::string, cMessage*> rttResetTimerMap;
+    //double rttTimeout;//time to delete the old rtt
+    //void scheduleRttReset(const std::string &hostName);
+    //std::map<std::string, cMessage*> rttResetTimerMap;
 
     double updateDestInterval;
 
@@ -45,7 +51,8 @@ protected:
     void sendPacket() override;
 public:
 
-    const std::map<std::string, omnetpp::simtime_t>& getRttMap() const { return rttMap; }
+    //const std::map<std::string, omnetpp::simtime_t>& getRttMap() const { return rttMap; }
+    const std::map<std::string, RttEntry>& getRttMap() const { return rttMap; }
     virtual void finish() override;
 };
 

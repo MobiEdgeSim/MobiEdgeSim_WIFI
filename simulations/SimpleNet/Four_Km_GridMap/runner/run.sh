@@ -58,7 +58,6 @@ echo '<Simulations>' >> "$XML_LOG"
 for cfg in "${Configs[@]}"; do
     echo "===================================================================="
     echo "Running simulation with configuration: $cfg"
-    echo "===================================================================="
 
     start_time=$(date +"%Y-%m-%d %H:%M:%S")
     SECONDS=0 

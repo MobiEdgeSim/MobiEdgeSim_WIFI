@@ -56,13 +56,15 @@ void Orchestrator::initialize(int stage)
     // initial the update time interval
     updateMsg = new cMessage("updateMecHost");
     spMsg = new cMessage("servicePlacement");
-    scheduleAt(simTime() + 2, updateMsg);
-    scheduleAt(simTime() + 5, spMsg);
+    scheduleAt(simTime() + 2, updateMsg); //time schedule for the first update
+    scheduleAt(simTime() + 5, spMsg); //time schedule for the first service placement
 
     requestRam = par("ramRequest").doubleValue();
     requestDisk = par("diskRequest").doubleValue();
     requestCpu = par("cpuRequest").doubleValue();
     algorithmName = par("algorithmName").stdstringValue();
+
+    rttFreshLimit = par("rttFreshLimit").doubleValue();
 
     //first update
     updateMecHost();
@@ -169,9 +171,11 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
         double dx = pos.x - currentCoord.x;
         double dy = pos.y - currentCoord.y;
         double distance = std::sqrt(dx * dx + dy * dy);
-
-        if (distance <= wIFIDistance)
+        EV << "Found mecHost: " << mod->getFullName() << ", distance: " << distance << " meters" << endl;
+        if (distance <= wIFIDistance) {
+            EV << "!!!inside!!!" << endl;
             hostList.push_back(mod->getFullName());
+        }
     }
 
     return hostList;
@@ -253,18 +257,19 @@ cModule* Orchestrator::findBestMecHostForUE(cModule *ue)
     //get the latency
     MobiEdgeSim::UdpUeApp *udpApp = check_and_cast<MobiEdgeSim::UdpUeApp*>(ue->getSubmodule("udpUeApp"));
     if (udpApp) {
-        const std::map<std::string, omnetpp::simtime_t> &rttMap = udpApp->getRttMap();
+        //const std::map<std::string, omnetpp::simtime_t> &rttMap = udpApp->getRttMap();
+        const auto& rttTable = udpApp->getRttMap();
         for (auto &hostInfo : hostInfos) {
-            auto it = rttMap.find(hostInfo.name);
-            if (it != rttMap.end()) {
-                EV << "Orchestrator get latency!!!!" << endl;
-                if (it->second.dbl() == 1e6) { //the host was reachable but the latency was not updated in 10s so it was set to 1e6
-                    hostInfo.latency = 1e6;
+            auto it = rttTable.find(hostInfo.name);
+            if (it != rttTable.end()) {
+                const auto& entry = it->second;
+                // too old?
+                if (simTime() - entry.lastUpdate > rttFreshLimit) {
+                    hostInfo.latency = 1e6;       // treat as unreachable
+                    EV << hostInfo.name << " RTT stale (" << simTime() - entry.lastUpdate << "s old)\n";
+                }else{
+                    hostInfo.latency = entry.rtt.dbl() * 1000 / 2;
                 }
-                else {
-                    hostInfo.latency = it->second.dbl() * 1000 / 2; // RTT to latency;
-                }
-
             }
             else {
                 hostInfo.latency = 1e6;
