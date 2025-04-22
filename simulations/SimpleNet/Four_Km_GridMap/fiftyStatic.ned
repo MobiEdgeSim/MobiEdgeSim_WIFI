@@ -19,6 +19,7 @@ package mobiedgesim.simulations.SimpleNet.Four_Km_GridMap;
 import mobiedgesim.nodes.mobileNodes.mmecHost.MmecHost;
 import mobiedgesim.nodes.mobileNodes.ue.Ue;
 import mobiedgesim.nodes.mecHost.MecHost;
+import mobiedgesim.nodes.mobileNodes.fakeMecHost.FakeMecHost;
 import mobiedgesim.nodes.orchestrator.Orchestrator;
 import inet.visualizer.common.IntegratedMultiVisualizer;
 import inet.physicallayer.wireless.ieee80211.packetlevel.Ieee80211ScalarRadioMedium;
@@ -35,6 +36,9 @@ network fiftyStatic
         @display("bgb=4000,4000");
     submodules:
         mmecHost[0]: MmecHost {
+            @display("p=277,60");
+        }
+        fakeMecHost[0]: FakeMecHost {
             @display("p=277,60");
         }
         ue[0]: Ue {
