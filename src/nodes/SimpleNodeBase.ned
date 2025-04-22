@@ -64,8 +64,8 @@ module SimpleNodeBase
         mobility.typename = default("VeinsInetMobility");//# Mobility
         *.routingTableModule = default(absPath(".ipv4.routingTable"));//# Network Layer specs
         *.interfaceTableModule = default(absPath(".interfaceTable"));
-        ipv4.configurator.typename = "HostAutoConfigurator";
-        ipv4.configurator.interfaces = "wlan0 lo0";
+        ipv4.configurator.typename = default("HostAutoConfigurator");
+        ipv4.configurator.interfaces = default("wlan0 lo0");
 
         int numEthInterfaces = default(0);
         int numWlanInterfaces = default(0);
