@@ -96,6 +96,9 @@ void Orchestrator::updateMecHost()
 
     for (cModule::SubmoduleIterator it(systemModule); !it.end(); ++it) {
         cModule *mod = *it;
+        if (strcmp(mod->getModuleType()->getName(), "FakeMecHost") == 0) {
+            continue;
+        }
         if (dynamic_cast<MecHost*>(mod) != nullptr) {
             newMecHosts.push_back(mod);
         }
@@ -157,7 +160,10 @@ std::vector<std::string> Orchestrator::getMechostNames(inet::Coord currentCoord)
         //MmecHost *mmecHost = dynamic_cast<MmecHost*>(mod);
         if (!mecHost)
             continue;
-
+//        if (strcmp(mod->getModuleType()->getName(), "FakeMecHost") == 0) {
+//            EV<<"skip fake MECHost"<<endl;
+//            continue;
+//            }
         inet::Coord pos;
         if (mecHost) {
             pos.x = mecHost->getMecHostInfo().latitude;
@@ -234,7 +240,9 @@ std::vector<MobiEdgeSim::MecHostInfo> Orchestrator::buildMecHostInfos()
 
         if (!mecHost)
             continue;
-
+        if (strcmp(mod->getModuleType()->getName(), "FakeMecHost") == 0) {
+            continue;
+        }
         if (mecHost) {
             infos.push_back(mecHost->getMecHostInfo());
         }
