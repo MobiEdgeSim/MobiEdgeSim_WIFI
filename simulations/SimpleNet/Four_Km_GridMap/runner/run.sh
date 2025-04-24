@@ -20,10 +20,10 @@ LIBRARIES="-l ../../../../inet/src/INET -l ../../../../Simu5G/src/simu5g -l ../.
 
 INI_FILE="omnetpp.ini"
 
-SIMULATION_DIR="/home/tianhao/Documents/workspace/MobiEdgeSim/MobiEdgeSim/simulations/SimpleNet/Four_Km_GridMap"
+SIMULATION_DIR="/home/tianhao/Documents/workspace/MobiEdgeSim/simulations/SimpleNet/Four_Km_GridMap"
 
 Configs=(
-"fifty_static_zero_mobile"
+	"fifty_static_zero_mobile"
     #"hundred_static_zero_mobile"
     #"zero_static_half_mobile"
     "fifty_static_half_mobile"
