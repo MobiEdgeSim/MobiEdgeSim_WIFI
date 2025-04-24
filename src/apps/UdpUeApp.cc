@@ -48,23 +48,7 @@ void UdpUeApp::handleMessage(cMessage *msg)
         scheduleAt(simTime() + updateDestInterval, updateDestMsg);
         //std::cout << "UdpUeApp::handleMessage -- (scheduleAt) updateDestAddresses"<<updateDestInterval << std::endl;
         return;
-    }//reset the old rtt
-//    else if (strstr(msg->getName(), "resetRtt-") == msg->getName()) {
-//
-//        std::string hostName = msg->par("hostName").stringValue();
-//
-//        rttMap[hostName] = 1e6;
-//        EV << "UdpUeApp::handleMessage => set rttMap[" << hostName << "] to 1e6.\n";
-//
-//        auto it = rttResetTimerMap.find(hostName);
-//        if (it != rttResetTimerMap.end()) {
-//            if (it->second == msg) {
-//                rttResetTimerMap.erase(it);
-//            }
-//        }
-//        delete msg;
-//        return;
-//    }
+    }
     inet::UdpBasicApp::handleMessage(msg);
 }
 void UdpUeApp::updateDestAddresses()

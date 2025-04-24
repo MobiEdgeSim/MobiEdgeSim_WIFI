@@ -19,10 +19,10 @@ import inet.applications.udpapp.UdpEchoApp;
 import mobiedgesim.apps.UdpHostSink;
 import mobiedgesim.nodes.mobileNodes.mmecHost.MmecHost;
 
-module FakeMecHost extends SimpleNodeBase
+module FakeMecHost extends MmecHost
 {
     parameters:
-        mobility.typename = default("VeinsInetMobility");
-        @display("i=device/server2;bgb=1000,679");
-    
+//        mobility.typename = default("VeinsInetMobility");
+//        @display("i=device/server2;bgb=1000,679");
+//    
 }
