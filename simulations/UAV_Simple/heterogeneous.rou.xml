@@ -1,0 +1,11 @@
+<routes>
+  <!--Namespace(N=75, filecount=None, input='routes.txt', launch=False, output='singleIntersection.rou.xml', quarter=100)-->
+  <vType id="car" accel="0.8" decel="4.5" sigma="1.0" length="4" minGap="2.5" maxSpeed="13.89" guiShape="passenger" />
+  <vType id="bus" accel="2.00" decel="4.00" sigma="0.65" length="8.05" minGap="1.00" maxSpeed="22.84" vClass="truck" guiShape="bus" probability="0.001" />
+  <route id="bus_loop" edges="0/1to1/1 1/1to2/1 2/1to2/0 2/0to1/0 1/0to0/0 0/0to0/1"/>
+  <vehicle id="8" type="bus" route="bus_loop" depart="0"/>
+
+  <vehicle id="7" type="car" route="bus_loop" depart="0.5"/>
+  
+
+</routes>

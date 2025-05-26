@@ -1,13 +1,13 @@
 #
-# OMNeT++/OMNEST Makefile for MobiEdgeSim
+# OMNeT++/OMNEST Makefile for MobiEdgeSim_WIFI
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -KINET_PROJ=../../inet -KSIMU5G_PROJ=../../Simu5G -KVEINS_INET_PROJ=../../veins_inet -KVEINS_PROJ=../../veins -DINET_IMPORT -DVEINS_INET_IMPORT -I/usr/lib/jvm/java-11-openjdk-amd64/include -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux -I/usr/lib/jvm/java-11-openjdk-amd64/lib -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server -I$$\(INET_PROJ\)/src -I$$\(SIMU5G_PROJ\)/src -I$$\(VEINS_INET_PROJ\)/src -I$$\(VEINS_PROJ\)/src -I. -L/usr/lib/jvm/java-11-openjdk-amd64/lib/server -L$$\(INET_PROJ\)/src -L$$\(SIMU5G_PROJ\)/src -L$$\(VEINS_INET_PROJ\)/src -lINET$$\(D\) -lsimu5g$$\(D\) -lveins_inet$$\(D\)
+#  opp_makemake -f --deep -KINET_PROJ=../../inet -KSIMU5G_PROJ=../../Simu5G -KVEINS_INET_PROJ=../../veins/subprojects/veins_inet -KVEINS_PROJ=../../veins -DINET_IMPORT -DVEINS_INET_IMPORT -I/usr/lib/jvm/java-11-openjdk-amd64/include -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux -I/usr/lib/jvm/java-11-openjdk-amd64/lib -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server -I$$\(INET_PROJ\)/src -I$$\(SIMU5G_PROJ\)/src -I$$\(VEINS_INET_PROJ\)/src -I$$\(VEINS_PROJ\)/src -I. -L/usr/lib/jvm/java-11-openjdk-amd64/lib/server -L$$\(INET_PROJ\)/src -L$$\(SIMU5G_PROJ\)/src -L$$\(VEINS_INET_PROJ\)/src -lINET$$\(D\) -lsimu5g$$\(D\) -lveins_inet$$\(D\)
 #
 
 # Name of target to be created (-o option)
 TARGET_DIR = .
-TARGET_NAME = MobiEdgeSim$(D)
+TARGET_NAME = MobiEdgeSim_WIFI$(D)
 TARGET = $(TARGET_NAME)$(EXE_SUFFIX)
 TARGET_IMPLIB = $(TARGET_NAME)$(IMPLIB_SUFFIX)
 TARGET_IMPDEF = $(TARGET_NAME)$(IMPDEF_SUFFIX)
@@ -67,7 +67,7 @@ SMFILES =
 # Other makefile variables (-K)
 INET_PROJ=../../inet
 SIMU5G_PROJ=../../Simu5G
-VEINS_INET_PROJ=../../veins_inet
+VEINS_INET_PROJ=../../veins/subprojects/veins_inet
 VEINS_PROJ=../../veins
 
 #------------------------------------------------------------------------------

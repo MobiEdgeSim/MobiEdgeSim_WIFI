@@ -3,6 +3,7 @@
 	<name>MobiEdgeSim</name>
 	<comment></comment>
 	<projects>
+		<project>AirMobiSim_libveins</project>
 		<project>inet</project>
 		<project>Simu5G</project>
 		<project>veins_inet</project>
