@@ -25,8 +25,9 @@ import inet.physicallayer.wireless.ieee80211.packetlevel.Ieee80211ScalarRadioMed
 import org.car2x.veins.subprojects.veins_inet.VeinsInetManager;
 import inet.networklayer.configurator.ipv4.Ipv4NetworkConfigurator;
 import veins_libairmobisim.mobility.DroCIManager;
+import org.car2x.veins.base.modules.BaseWorldUtility;
 
-network Ue_MecHost
+network Uav_Ue_MecHost
 {
     parameters:
         **.mgmt.numChannels = 20;
@@ -63,9 +64,9 @@ network Ue_MecHost
             wlan[*].mgmt.typename = "Ieee80211MgmtAdhoc";
             wlan[*].agent.typename = "";
         }
-        visualizer: IntegratedMultiVisualizer {
-            @display("p=31,36");
-        }
+//        visualizer: IntegratedMultiVisualizer {
+//            @display("p=31,36");
+//        }
         radioMedium: Ieee80211ScalarRadioMedium {
             @display("p=31,105");
         }
@@ -81,6 +82,13 @@ network Ue_MecHost
         }
         uav[0]: UAV {
             @display("p=492,82");
+        }
+        world: BaseWorldUtility {
+            parameters:
+                playgroundSizeX = veins_eval_by_version(veins_omnetpp_buildnum(), "playgroundSizeX", 1525, "parent.playgroundSizeX");
+                playgroundSizeY = veins_eval_by_version(veins_omnetpp_buildnum(), "playgroundSizeY", 1525, "parent.playgroundSizeY");
+                playgroundSizeZ = veins_eval_by_version(veins_omnetpp_buildnum(), "playgroundSizeZ", 1525, "parent.playgroundSizeZ");
+                @display("p=31,36");
         }
 
 

@@ -78,7 +78,7 @@ module UAV
         input cellularRadioIn @directIn @allowUnconnected;
         inout ethg[numEthInterfaces] @labels(EtherFrame-conn) @allowUnconnected;
     submodules:
-        drociMobility: <drocimobilityType> like org.car2x.veins.base.modules.IMobility {
+        mobility: <drocimobilityType> like IMobility {
             parameters:
                 @display("p=127,175;i=block/cogwheel");
         }

@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for MobiEdgeSim_WIFI
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -KINET_PROJ=../../inet -KSIMU5G_PROJ=../../Simu5G -KVEINS_INET_PROJ=../../veins/subprojects/veins_inet -KVEINS_PROJ=../../veins -DINET_IMPORT -DVEINS_INET_IMPORT -I/usr/lib/jvm/java-11-openjdk-amd64/include -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux -I/usr/lib/jvm/java-11-openjdk-amd64/lib -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server -I$$\(INET_PROJ\)/src -I$$\(SIMU5G_PROJ\)/src -I$$\(VEINS_INET_PROJ\)/src -I$$\(VEINS_PROJ\)/src -I. -L/usr/lib/jvm/java-11-openjdk-amd64/lib/server -L$$\(INET_PROJ\)/src -L$$\(SIMU5G_PROJ\)/src -L$$\(VEINS_INET_PROJ\)/src -lINET$$\(D\) -lsimu5g$$\(D\) -lveins_inet$$\(D\)
+#  opp_makemake -f --deep -KAIRMOBISIM_LIBVEINS_PROJ=../../AirMobiSim_libveins -KVEINS_PROJ=../../veins -KVEINS_INET_PROJ=../../veins/subprojects/veins_inet -KINET_PROJ=../../inet -KSIMU5G_PROJ=../../Simu5G -DVEINS_LIBAIRMOBISIM_IMPORT -DINET_IMPORT -DVEINS_INET_IMPORT -I/usr/lib/jvm/java-11-openjdk-amd64/include -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux -I/usr/lib/jvm/java-11-openjdk-amd64/lib -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server -I$$\(AIRMOBISIM_LIBVEINS_PROJ\)/src -I$$\(VEINS_PROJ\)/src -I. -I$$\(VEINS_PROJ\)/subprojects/veins_inet/src -I$$\(INET_PROJ\)/src -I$$\(SIMU5G_PROJ\)/src -L/usr/lib/jvm/java-11-openjdk-amd64/lib/server -L$$\(AIRMOBISIM_LIBVEINS_PROJ\)/src -L$$\(INET_PROJ\)/src -L$$\(SIMU5G_PROJ\)/src -L$$\(VEINS_PROJ\)/subprojects/veins_inet/src -lveins_libairmobisim$$\(D\) -lINET$$\(D\) -lsimu5g$$\(D\) -lveins_inet$$\(D\)
 #
 
 # Name of target to be created (-o option)
@@ -24,17 +24,18 @@ INCLUDE_PATH = \
     -I/usr/lib/jvm/java-11-openjdk-amd64/include/linux \
     -I/usr/lib/jvm/java-11-openjdk-amd64/lib \
     -I/usr/lib/jvm/java-11-openjdk-amd64/lib/server \
-    -I$(INET_PROJ)/src \
-    -I$(SIMU5G_PROJ)/src \
-    -I$(VEINS_INET_PROJ)/src \
+    -I$(AIRMOBISIM_LIBVEINS_PROJ)/src \
     -I$(VEINS_PROJ)/src \
-    -I.
+    -I. \
+    -I$(VEINS_PROJ)/subprojects/veins_inet/src \
+    -I$(INET_PROJ)/src \
+    -I$(SIMU5G_PROJ)/src
 
 # Additional object and library files to link with
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = $(LDFLAG_LIBPATH)/usr/lib/jvm/java-11-openjdk-amd64/lib/server $(LDFLAG_LIBPATH)$(INET_PROJ)/src $(LDFLAG_LIBPATH)$(SIMU5G_PROJ)/src $(LDFLAG_LIBPATH)$(VEINS_INET_PROJ)/src  -lINET$(D) -lsimu5g$(D) -lveins_inet$(D)
+LIBS = $(LDFLAG_LIBPATH)/usr/lib/jvm/java-11-openjdk-amd64/lib/server $(LDFLAG_LIBPATH)$(AIRMOBISIM_LIBVEINS_PROJ)/src $(LDFLAG_LIBPATH)$(INET_PROJ)/src $(LDFLAG_LIBPATH)$(SIMU5G_PROJ)/src $(LDFLAG_LIBPATH)$(VEINS_PROJ)/subprojects/veins_inet/src  -lveins_libairmobisim$(D) -lINET$(D) -lsimu5g$(D) -lveins_inet$(D)
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -65,10 +66,11 @@ MSGFILES = \
 SMFILES =
 
 # Other makefile variables (-K)
+AIRMOBISIM_LIBVEINS_PROJ=../../AirMobiSim_libveins
+VEINS_PROJ=../../veins
+VEINS_INET_PROJ=../../veins/subprojects/veins_inet
 INET_PROJ=../../inet
 SIMU5G_PROJ=../../Simu5G
-VEINS_INET_PROJ=../../veins/subprojects/veins_inet
-VEINS_PROJ=../../veins
 
 #------------------------------------------------------------------------------
 
@@ -89,10 +91,10 @@ include $(CONFIGFILE)
 # Simulation kernel and user interface libraries
 OMNETPP_LIBS = $(OPPMAIN_LIB) $(USERIF_LIBS) $(KERNEL_LIBS) $(SYS_LIBS)
 ifneq ($(PLATFORM),win32)
-LIBS += -Wl,-rpath,$(abspath /usr/lib/jvm/java-11-openjdk-amd64/lib/server) -Wl,-rpath,$(abspath $(INET_PROJ)/src) -Wl,-rpath,$(abspath $(SIMU5G_PROJ)/src) -Wl,-rpath,$(abspath $(VEINS_INET_PROJ)/src)
+LIBS += -Wl,-rpath,$(abspath /usr/lib/jvm/java-11-openjdk-amd64/lib/server) -Wl,-rpath,$(abspath $(AIRMOBISIM_LIBVEINS_PROJ)/src) -Wl,-rpath,$(abspath $(INET_PROJ)/src) -Wl,-rpath,$(abspath $(SIMU5G_PROJ)/src) -Wl,-rpath,$(abspath $(VEINS_PROJ)/subprojects/veins_inet/src)
 endif
 
-COPTS = $(CFLAGS) $(IMPORT_DEFINES) -DINET_IMPORT -DVEINS_INET_IMPORT $(INCLUDE_PATH) -I$(OMNETPP_INCL_DIR)
+COPTS = $(CFLAGS) $(IMPORT_DEFINES) -DVEINS_LIBAIRMOBISIM_IMPORT -DINET_IMPORT -DVEINS_INET_IMPORT $(INCLUDE_PATH) -I$(OMNETPP_INCL_DIR)
 MSGCOPTS = $(INCLUDE_PATH)
 SMCOPTS =
 
